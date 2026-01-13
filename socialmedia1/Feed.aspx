@@ -1,0 +1,681 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Feed.aspx.cs" Inherits="socialmedia1.Feed" %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SocialHub - Feed</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        :root {
+            --primary: #ff6b6b;
+            --primary-dark: #e35757;
+            --accent: #ffd166;
+            --bg: #0f172a;
+            --card-bg: #020617;
+            --card-border: rgba(148, 163, 184, 0.25);
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Poppins", system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at top left, #1d4ed8 0, transparent 50%),
+                        radial-gradient(circle at bottom right, #ec4899 0, transparent 55%),
+                        var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            color: var(--text-main);
+        }
+
+        .feed-wrapper {
+            width: 100%;
+            max-width: 1040px;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.85);
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            display: grid;
+            grid-template-columns: 1.3fr 0.9fr;
+        }
+
+        .feed-main {
+            padding: 22px 22px 18px 24px;
+            border-right: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .feed-side {
+            padding: 22px 22px 18px 20px;
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .brand-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #fb7185);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .brand-text {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .brand-right {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .feed-title {
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .feed-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .post-card {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 18px;
+            border: 1px solid var(--card-border);
+            padding: 12px 12px 10px 12px;
+            margin-bottom: 14px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .post-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+        }
+
+        .post-user-name {
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        .post-user-handle {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .post-time {
+            margin-left: auto;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        .post-text {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .post-media {
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .post-media img {
+            display: block;
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .post-actions-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .action-btn i {
+            font-size: 1rem;
+        }
+
+        .action-btn.liked i {
+            color: #fb7185;
+        }
+
+        .action-btn span.count {
+            font-size: 0.82rem;
+        }
+
+        .comments {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .comment-item {
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+
+        .comment-author {
+            font-weight: 500;
+        }
+
+        .comment-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .comment-form {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .comment-input {
+            flex: 1;
+            border-radius: 999px;
+            border: 1px solid var(--card-border);
+            background: rgba(15, 23, 42, 0.95);
+            color: var(--text-main);
+            font-size: 0.8rem;
+            padding: 6px 10px;
+            outline: none;
+        }
+
+        .comment-submit {
+            border-radius: 999px;
+            border: none;
+            padding: 6px 10px;
+            background: linear-gradient(135deg, var(--primary), #fb7185);
+            color: #111827;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .reels-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .reel-card {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            padding: 10px 10px 8px 10px;
+            margin-bottom: 12px;
+        }
+
+        .reel-media {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .reel-media img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .reel-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reel-play i {
+            font-size: 1.3rem;
+            color: #f9fafb;
+        }
+
+        .reel-caption {
+            font-size: 0.86rem;
+            margin-bottom: 4px;
+        }
+
+        .reel-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .reel-actions-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .reel-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Stories row */
+        .stories-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 4px 16px 4px;
+            margin-bottom: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .stories-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story-item {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .story-avatar-wrap {
+            width: 58px;
+            height: 58px;
+            border-radius: 999px;
+            padding: 2px;
+            background: conic-gradient(from 180deg, #f97316, #ec4899, #6366f1, #22c55e, #f97316);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .story-avatar-wrap.add-story {
+            background: rgba(148, 163, 184, 0.4);
+        }
+
+        .story-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 999px;
+            overflow: hidden;
+            background: #020617;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #020617;
+        }
+
+        .story-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .story-add-icon {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e5e7eb;
+            font-size: 1.3rem;
+        }
+
+        .story-name {
+            max-width: 70px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                padding: 12px;
+            }
+
+            .feed-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 520px;
+            }
+
+            .feed-main {
+                border-right: none;
+                border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+            }
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="feed-wrapper">
+            <section class="feed-main">
+                <div class="brand-row">
+                    <div class="brand-left">
+                        <div class="brand-logo">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div class="brand-text">Welcome back to SocialHub</div>
+                    </div>
+                    <div class="brand-right">
+                    
+                   
+                        <a href="userprofile.aspx" title="Profile" style="margin-left:10px; color: inherit; text-decoration: none;">
+                            <i class="fa-solid fa-user-circle" style="font-size: 20px;"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- User Stories -->
+                <section class="stories-row">
+                    <div class="story-item">
+                        <div class="story-avatar-wrap add-story">
+                            <div class="story-avatar">
+                                <div class="story-add-icon">
+                                    <i class="fa-solid fa-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="story-name">Your story</div>
+                    </div>
+
+                    <div class="story-item">
+                        <div class="story-avatar-wrap">
+                            <div class="story-avatar">
+                                <img src="https://i.pravatar.cc/80?img=12" alt="story user" />
+                            </div>
+                        </div>
+                        <div class="story-name">Alex</div>
+                    </div>
+
+                    <div class="story-item">
+                        <div class="story-avatar-wrap">
+                            <div class="story-avatar">
+                                <img src="https://i.pravatar.cc/80?img=7" alt="story user" />
+                            </div>
+                        </div>
+                        <div class="story-name">Maria</div>
+                    </div>
+
+                    <div class="story-item">
+                        <div class="story-avatar-wrap">
+                            <div class="story-avatar">
+                                <img src="https://i.pravatar.cc/80?img=15" alt="story user" />
+                            </div>
+                        </div>
+                        <div class="story-name">Chris</div>
+                    </div>
+
+                    <div class="story-item">
+                        <div class="story-avatar-wrap">
+                            <div class="story-avatar">
+                                <img src="https://i.pravatar.cc/80?img=24" alt="story user" />
+                            </div>
+                        </div>
+                        <div class="story-name">Taylor</div>
+                    </div>
+
+                    <div class="story-item">
+                        <div class="story-avatar-wrap">
+                            <div class="story-avatar">
+                                <img src="https://i.pravatar.cc/80?img=30" alt="story user" />
+                            </div>
+                        </div>
+                        <div class="story-name">Jordan</div>
+                    </div>
+                </section>
+
+                <div class="feed-title">Latest posts</div>
+                <div class="feed-subtitle">See what your friends and creators are sharing today.</div>
+
+                <!-- Post 1 -->
+                <article class="post-card" data-post-id="1">
+                    <header class="post-header">
+                        <img src="https://i.pravatar.cc/150?img=3" class="post-avatar" alt="user" />
+                        <div>
+                            <div class="post-user-name">Alex Carter</div>
+                            <div class="post-user-handle">@alex_travels</div>
+                        </div>
+                        <div class="post-time">2 hrs ago</div>
+                    </header>
+
+                    <div class="post-text">Weekend escape to the mountains. The view from the top was unreal 30b</div>
+                    <div class="post-media">
+                        <img src="https://picsum.photos/640/400?random=21" alt="post image" />
+                    </div>
+
+                    <div class="post-actions">
+                        <div class="post-actions-left">
+                            <div class="action-btn like-btn" data-liked="false">
+                                <i class="fa-regular fa-heart"></i>
+                                <span class="count">128</span>
+                            </div>
+                            <div class="action-btn comment-toggle">
+                                <i class="fa-regular fa-comment"></i>
+                                <span>Comment</span>
+                            </div>
+                        </div>
+                        <div class="post-saves">
+                            <i class="fa-regular fa-bookmark"></i>
+                        </div>
+                    </div>
+
+                    <div class="comments">
+                        <div class="comment-item">
+                            <span class="comment-author">@maria</span>
+                            <span>That view is insane!</span>
+                            <div class="comment-meta">12 min ago</div>
+                        </div>
+
+                        <form class="comment-form">
+                            <input type="text" class="comment-input" placeholder="Add a comment..." />
+                            <button type="submit" class="comment-submit">Post</button>
+                        </form>
+                    </div>
+                </article>
+
+                <!-- Post 2 -->
+                <article class="post-card" data-post-id="2">
+                    <header class="post-header">
+                        <img src="https://i.pravatar.cc/150?img=5" class="post-avatar" alt="user" />
+                        <div>
+                            <div class="post-user-name">Jamie Lee</div>
+                            <div class="post-user-handle">@jamie_cooks</div>
+                        </div>
+                        <div class="post-time">5 hrs ago</div>
+                    </header>
+
+                    <div class="post-text">Tried a new pasta recipe tonight 35d499 Sharing the results with you all!</div>
+                    <div class="post-media">
+                        <img src="https://picsum.photos/640/400?random=22" alt="post image" />
+                    </div>
+
+                    <div class="post-actions">
+                        <div class="post-actions-left">
+                            <div class="action-btn like-btn" data-liked="false">
+                                <i class="fa-regular fa-heart"></i>
+                                <span class="count">89</span>
+                            </div>
+                            <div class="action-btn comment-toggle">
+                                <i class="fa-regular fa-comment"></i>
+                                <span>Comment</span>
+                            </div>
+                        </div>
+                        <div class="post-saves">
+                            <i class="fa-regular fa-bookmark"></i>
+                        </div>
+                    </div>
+
+                    <div class="comments">
+                        <div class="comment-item">
+                            <span class="comment-author">@foodie</span>
+                            <span>Looks delicious!</span>
+                            <div class="comment-meta">1 hr ago</div>
+                        </div>
+
+                        <form class="comment-form">
+                            <input type="text" class="comment-input" placeholder="Add a comment..." />
+                            <button type="submit" class="comment-submit">Post</button>
+                        </form>
+                    </div>
+                </article>
+            </section>
+
+            <!-- RIGHT: Reels -->
+            <aside class="feed-side">
+                <div class="reels-title">
+                    <i class="fa-solid fa-film"></i>
+                    Reels for you
+                </div>
+
+                <article class="reel-card" data-reel-id="1">
+                    <div class="reel-media">
+                        <img src="https://picsum.photos/360/540?random=31" alt="reel" />
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="reel-caption">Sunset timelapse over the city skyline.</div>
+                    <div class="reel-actions">
+                        <div class="reel-actions-left">
+                            <div class="action-btn like-btn" data-liked="false">
+                                <i class="fa-regular fa-heart"></i>
+                                <span class="count">420</span>
+                            </div>
+                            <div class="action-btn">
+                                <i class="fa-regular fa-comment"></i>
+                                <span>32</span>
+                            </div>
+                        </div>
+                        <div class="reel-meta">34s</div>
+                    </div>
+                </article>
+
+                <article class="reel-card" data-reel-id="2">
+                    <div class="reel-media">
+                        <img src="https://picsum.photos/360/540?random=32" alt="reel" />
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="reel-caption">Morning coffee routine</div>
+                    <div class="reel-actions">
+                        <div class="reel-actions-left">
+                            <div class="action-btn like-btn" data-liked="false">
+                                <i class="fa-regular fa-heart"></i>
+                                <span class="count">210</span>
+                            </div>
+                            <div class="action-btn">
+                                <i class="fa-regular fa-comment"></i>
+                                <span>15</span>
+                            </div>
+                        </div>
+                        <div class="reel-meta">1m 15s</div>
+                    </div>
+                </article>
+
+                <article class="reel-card" data-reel-id="3">
+                    <div class="reel-media">
+                        <img src="https://picsum.photos/360/540?random=33" alt="reel" />
+                        <div class="reel-play">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="reel-caption">Beach sunset vibes</div>
+                    <div class="reel-actions">
+                        <div class="reel-actions-left">
+                            <div class="action-btn like-btn" data-liked="false">
+                                <i class="fa-regular fa-heart"></i>
+                                <span class="count">180</span>
+                            </div>
+                            <div class="action-btn">
+                                <i class="fa-regular fa-comment"></i>
+                                <span>8</span>
+                            </div>
+                        </div>
+                        <div class="reel-meta">45s</div>
+                    </div>
+                </article>
+            </aside>
+        </div>
+    </form>
+
+    <script>
+        // JavaScript code here
+    </script>
+</body>
+</html>
