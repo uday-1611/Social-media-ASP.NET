@@ -22,7 +22,7 @@ namespace socialmedia1
             //     Response.Redirect("login.aspx");
             //     return;
             // }
-
+y
             int userId = Convert.ToInt32(Session["UserID"]);
             // Handle profile image upload (optional)
             if (fuProfileImage.HasFile)

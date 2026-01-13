@@ -432,8 +432,6 @@
                         <div class="brand-text">Welcome back to SocialHub</div>
                     </div>
                     <div class="brand-right">
-                    
-                   
                         <a href="userprofile.aspx" title="Profile" style="margin-left:10px; color: inherit; text-decoration: none;">
                             <i class="fa-solid fa-user-circle" style="font-size: 20px;"></i>
                         </a>
