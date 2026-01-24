@@ -22,8 +22,18 @@
                             <div class="d-flex align-items-center mb-4">
                                 <!-- Profile image -->
                                 <div class="me-3 text-center">
-                                    <img src="https://i.pravatar.cc/150" alt="Profile"
-                                         style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #fff; display:block; margin:0 auto 8px auto;" />
+                                    <div id="editDefaultProfileIcon" style="display: none; width: 80px; height: 80px; margin: 0 auto 8px auto;">
+                                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                        <lord-icon
+                                            src="https://cdn.lordicon.com/kdduutaw.json"
+                                            trigger="loop"
+                                            delay="2000"
+                                            colors="primary:#4f46e5,secondary:#818cf8,tertiary:#c7d2fe"
+                                            style="width:80px;height:80px">
+                                        </lord-icon>
+                                    </div>
+                                    <img id="editProfileImage" src="" alt="Profile"
+                                         style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #fff; display:none; margin:0 auto 8px auto;" />
                                     <!-- File upload to change profile icon (UI only) -->
                                     <asp:FileUpload ID="fuProfileImage" runat="server" CssClass="form-control form-control-sm" />
                                     <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Choose a new profile picture</small>
