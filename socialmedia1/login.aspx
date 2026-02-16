@@ -170,39 +170,6 @@
             font-size: 0.9rem;
         }
 
-        .options-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 4px;
-            margin-bottom: 6px;
-        }
-
-        .remember {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .remember input[type="checkbox"] {
-            cursor: pointer;
-        }
-
-        .forgot-link {
-            font-size: 0.8rem;
-        }
-
-        .forgot-link a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        .forgot-link a:hover {
-            text-decoration: underline;
-        }
-
         .btn-primary {
             width: 100%;
             margin-top: 10px;
@@ -248,51 +215,6 @@
             flex: 1;
             height: 1px;
             background: rgba(148, 163, 184, 0.35);
-        }
-
-        .social-row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .social-btn {
-            flex: 1;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(148, 163, 184, 0.4);
-            background: rgba(15, 23, 42, 0.9);
-            color: var(--text-main);
-            font-size: 0.82rem;
-            padding: 8px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
-        }
-
-        .social-btn:hover {
-            transform: translateY(-1px);
-            background: rgba(15, 23, 42, 1);
-        }
-
-        .social-btn.google:hover {
-            border-color: #f97373;
-        }
-
-        .social-btn.facebook:hover {
-            border-color: #60a5fa;
-        }
-
-        .social-btn.twitter:hover {
-            border-color: #38bdf8;
-        }
-
-        .register-link {
-            margin-top: 14px;
-            text-align: center;
-            font-size: 0.82rem;
-            color: var(--text-muted);
         }
 
         .register-link a {
@@ -356,12 +278,6 @@
                             <button type="button" class="toggle-password" id="btnTogglePwd">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
-                        </div>
-                    </div>
-
-                    <div class="options-row">
-                        <div class="forgot-link">
-                            <a href="#">Forgot password?</a>
                         </div>
                     </div>
 

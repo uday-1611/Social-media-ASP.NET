@@ -540,6 +540,7 @@
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             width: 100%;
+            height: 550px;
             cursor: pointer;
         }
 
@@ -550,7 +551,7 @@
 
         .card-media {
             width: 100%;
-            height: 200px;
+            height: 400px;
             object-fit: cover;
         }
 

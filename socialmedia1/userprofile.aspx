@@ -427,6 +427,70 @@
             50% { transform: scale(1.05); }
         }
 
+        /* Post Creation Styles */
+        .post-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.9);
+            color: #e5e7eb;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .post-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(15, 23, 42, 1);
+        }
+
+        .post-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .file-upload {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed rgba(148, 163, 184, 0.5);
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.5);
+            color: #e5e7eb;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #3b82f6;
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        .btn-create-post {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-create-post:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
         @media (max-width: 767.98px) {
             .ig-header {
                 flex-direction: column;
@@ -555,10 +619,13 @@
 
             <!-- Tabs -->
             <nav class="ig-tabs">
+                <div class="ig-tab-active">
+                    <i class="bi bi-plus-circle"></i> Create Post
+                </div>
                 <div>
                     <i class="bi bi-grid-3x3"></i> Posts
                 </div>
-                <div class="ig-tab-active">
+                <div>
                     <i class="bi bi-bookmark"></i> Saved
                 </div>
                 <div>
@@ -566,76 +633,97 @@
                 </div>
             </nav>
 
-            <!-- Saved Posts Grid -->
-            <section class="ig-grid">
+            <!-- Create Post Section -->
+            <section id="createPostSection" style="padding: 20px; border-bottom: 1px solid rgba(148, 163, 184, 0.35);">
+                <h3 style="margin-bottom: 15px; color: #f9fafb;">Create New Post</h3>
+                <div class="form-group">
+                    <asp:TextBox ID="txtPostContent" runat="server" 
+                        TextMode="MultiLine" 
+                        Rows="3" 
+                        CssClass="post-textarea"
+                        placeholder="What's on your mind?" />
+                </div>
+                <div class="form-group">
+                    <asp:FileUpload ID="fuPostImage" runat="server" CssClass="file-upload" />
+                </div>
+                <div class="form-group">
+                    <asp:Button ID="btnCreatePost" runat="server" 
+                        Text="Create Post" 
+                        CssClass="btn-create-post"
+                        OnClick="btnCreatePost_Click" />
+                </div>
+            </section>
+
+            <!-- User Posts Grid -->
+            <section class="ig-grid" id="userPostsGrid" style="display: none;">
                 <div class="ig-grid-row">
                     <div class="ig-grid-item">
-                        <img src="https://picsum.photos/400?random=21" class="ig-grid-img" />
+                        <img src="https://picsum.photos/400?random=31" class="ig-grid-img" />
                         <div class="ig-grid-overlay">
-                            <span><i class="bi bi-heart-fill"></i> 234</span>
-                            <span><i class="bi bi-chat"></i> 45</span>
+                            <span><i class="bi bi-heart-fill"></i> 45</span>
+                            <span><i class="bi bi-chat"></i> 8</span>
                         </div>
                     </div>
                     <div class="ig-grid-item">
-                        <img src="https://picsum.photos/400?random=22" class="ig-grid-img" />
+                        <img src="https://picsum.photos/400?random=32" class="ig-grid-img" />
                         <div class="ig-grid-overlay">
-                            <span><i class="bi bi-heart-fill"></i> 567</span>
-                            <span><i class="bi bi-chat"></i> 89</span>
+                            <span><i class="bi bi-heart-fill"></i> 78</span>
+                            <span><i class="bi bi-chat"></i> 12</span>
                         </div>
                     </div>
                     <div class="ig-grid-item">
-                        <img src="https://picsum.photos/400?random=23" class="ig-grid-img" />
+                        <img src="https://picsum.photos/400?random=33" class="ig-grid-img" />
                         <div class="ig-grid-overlay">
-                            <span><i class="bi bi-heart-fill"></i> 890</span>
-                            <span><i class="bi bi-chat"></i> 156</span>
+                            <span><i class="bi bi-heart-fill"></i> 23</span>
+                            <span><i class="bi bi-chat"></i> 5</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="ig-grid-row">
                     <div class="ig-grid-item">
-                        <img src="https://picsum.photos/400?random=24" class="ig-grid-img" />
+                        <img src="https://picsum.photos/400?random=34" class="ig-grid-img" />
                         <div class="ig-grid-overlay">
-                            <span><i class="bi bi-heart-fill"></i> 123</span>
+                            <span><i class="bi bi-heart-fill"></i> 156</span>
                             <span><i class="bi bi-chat"></i> 28</span>
                         </div>
                     </div>
                     <div class="ig-grid-item">
-                        <img src="https://picsum.photos/400?random=25" class="ig-grid-img" />
+                        <img src="https://picsum.photos/400?random=35" class="ig-grid-img" />
                         <div class="ig-grid-overlay">
-                            <span><i class="bi bi-heart-fill"></i> 456</span>
-                            <span><i class="bi bi-chat"></i> 78</span>
+                            <span><i class="bi bi-heart-fill"></i> 89</span>
+                            <span><i class="bi bi-chat"></i> 15</span>
                         </div>
                     </div>
                     <div class="ig-grid-item">
-                        <img src="https://picsum.photos/400?random=26" class="ig-grid-img" />
+                        <img src="https://picsum.photos/400?random=36" class="ig-grid-img" />
                         <div class="ig-grid-overlay">
-                            <span><i class="bi bi-heart-fill"></i> 342</span>
-                            <span><i class="bi bi-chat"></i> 91</span>
+                            <span><i class="bi bi-heart-fill"></i> 234</span>
+                            <span><i class="bi bi-chat"></i> 42</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="ig-grid-row">
                     <div class="ig-grid-item">
-                        <img src="https://picsum.photos/400?random=27" class="ig-grid-img" />
+                        <img src="https://picsum.photos/400?random=37" class="ig-grid-img" />
                         <div class="ig-grid-overlay">
-                            <span><i class="bi bi-heart-fill"></i> 189</span>
-                            <span><i class="bi bi-chat"></i> 34</span>
+                            <span><i class="bi bi-heart-fill"></i> 67</span>
+                            <span><i class="bi bi-chat"></i> 9</span>
                         </div>
                     </div>
                     <div class="ig-grid-item">
-                        <img src="https://picsum.photos/400?random=28" class="ig-grid-img" />
+                        <img src="https://picsum.photos/400?random=38" class="ig-grid-img" />
                         <div class="ig-grid-overlay">
-                            <span><i class="bi bi-heart-fill"></i> 678</span>
-                            <span><i class="bi bi-chat"></i> 123</span>
+                            <span><i class="bi bi-heart-fill"></i> 123</span>
+                            <span><i class="bi bi-chat"></i> 21</span>
                         </div>
                     </div>
                     <div class="ig-grid-item">
-                        <img src="https://picsum.photos/400?random=29" class="ig-grid-img" />
+                        <img src="https://picsum.photos/400?random=39" class="ig-grid-img" />
                         <div class="ig-grid-overlay">
-                            <span><i class="bi bi-heart-fill"></i> 234</span>
-                            <span><i class="bi bi-chat"></i> 56</span>
+                            <span><i class="bi bi-heart-fill"></i> 45</span>
+                            <span><i class="bi bi-chat"></i> 7</span>
                         </div>
                     </div>
                 </div>
@@ -645,6 +733,138 @@
     </form>
 
     <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.ig-tabs > div').forEach(tab => {
+                tab.classList.remove('ig-tab-active');
+            });
+            
+            // Add active class to clicked tab
+            event.target.closest('div').classList.add('ig-tab-active');
+            
+            // Load content based on tab
+            const postsGrid = document.getElementById('userPostsGrid');
+            const createPostSection = document.getElementById('createPostSection');
+            
+            // Hide all sections first
+            if (createPostSection) createPostSection.style.display = 'none';
+            if (postsGrid) postsGrid.style.display = 'none';
+            
+            if (tabName === 'create') {
+                // Show create post section
+                if (createPostSection) createPostSection.style.display = 'block';
+            } else if (tabName === 'posts') {
+                // Show user's own posts
+                if (postsGrid) postsGrid.style.display = 'block';
+                loadUserPosts();
+            } else if (tabName === 'saved') {
+                // Show saved posts
+                if (postsGrid) postsGrid.style.display = 'block';
+                loadSavedPosts();
+            } else if (tabName === 'tagged') {
+                // Show tagged posts
+                if (postsGrid) postsGrid.style.display = 'block';
+                loadTaggedPosts();
+            }
+        }
+        
+        function loadUserPosts() {
+            // Use database-loaded posts or empty array if no data
+            const userPosts = window.userPosts || [];
+            renderPosts(userPosts);
+        }
+        
+        function loadSavedPosts() {
+            // Use database-loaded saved posts or empty array if no data
+            const savedPosts = window.userSaved || [];
+            
+            // Debug: Log what we received from database
+            console.log('=== DEBUG: Saved Posts from Database ===');
+            console.log('Number of saved posts:', savedPosts.length);
+            console.log('Saved posts data:', savedPosts);
+            console.log('=== END DEBUG ===');
+            
+            renderPosts(savedPosts);
+        }
+        
+        function loadTaggedPosts() {
+            // Use database-loaded reels as tagged posts or empty array if no data
+            const taggedPosts = window.userReels || [];
+            renderPosts(taggedPosts);
+        }
+        
+        function renderPosts(posts) {
+            const postsGrid = document.getElementById('userPostsGrid');
+            let html = '';
+            
+            if (posts.length === 0) {
+                // Show empty state message
+                html = `
+                    <div style="text-align: center; padding: 60px 20px; color: #9ca3af;">
+                        <div style="font-size: 3rem; margin-bottom: 16px;">📷</div>
+                        <div style="font-size: 1.2rem; margin-bottom: 8px;">No posts yet</div>
+                        <div style="font-size: 0.9rem;">Start creating and sharing your moments!</div>
+                    </div>
+                `;
+            } else {
+                // Create rows of 3 posts each
+                for (let i = 0; i < posts.length; i += 3) {
+                    html += '<div class="ig-grid-row">';
+                    
+                    for (let j = 0; j < 3 && i + j < posts.length; j++) {
+                        const post = posts[i + j];
+                        
+                        // Only show posts that have actual media URLs
+                        if (post.image && post.image.trim() !== '') {
+                            html += `
+                                <div class="ig-grid-item">
+                                    <img src="${post.image}" class="ig-grid-img" alt="${post.title}" />
+                                    <div class="ig-grid-overlay">
+                                        <span><i class="bi bi-heart-fill"></i> ${post.likes}</span>
+                                        <span><i class="bi bi-chat"></i> ${post.comments}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                    
+                    html += '</div>';
+                }
+                
+                // If no valid posts with images were found
+                if (html === '<div class="ig-grid-row"></div>') {
+                    html = `
+                        <div style="text-align: center; padding: 60px 20px; color: #9ca3af;">
+                            <div style="font-size: 3rem; margin-bottom: 16px;">📷</div>
+                            <div style="font-size: 1.2rem; margin-bottom: 8px;">No media posts yet</div>
+                            <div style="font-size: 0.9rem;">Create posts with images or videos to see them here!</div>
+                        </div>
+                    `;
+                }
+            }
+            
+            postsGrid.innerHTML = html;
+        }
+        
+        // Add click event listeners to tabs
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.ig-tabs > div');
+            tabs.forEach((tab, index) => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabNames = ['create', 'posts', 'saved', 'tagged'];
+                    switchTab(tabNames[index]);
+                });
+            });
+            
+            // Show create post section by default
+            const createPostSection = document.getElementById('createPostSection');
+            const postsGrid = document.getElementById('userPostsGrid');
+            if (createPostSection) createPostSection.style.display = 'block';
+            if (postsGrid) postsGrid.style.display = 'none';
+        });
+
         function showLogoutConfirm() {
             document.getElementById('logoutConfirmModal').style.display = 'block';
             document.body.style.overflow = 'hidden'; // Prevent background scrolling

@@ -54,7 +54,6 @@ namespace socialmedia1
                             using (SqlCommand createCmd = new SqlCommand(createColumnQuery, con))
                             {
                                 createCmd.ExecuteNonQuery();
-                                // Optional: Log that column was created
                                 System.Diagnostics.Trace.WriteLine("profile_pic column created automatically");
                             }
                         }
@@ -63,7 +62,7 @@ namespace socialmedia1
             }
             catch (Exception ex)
             {
-                // Log error but don't break the application
+                // Log error but don't break application
                 System.Diagnostics.Trace.WriteLine("Error ensuring profile_pic column: " + ex.Message);
             }
         }

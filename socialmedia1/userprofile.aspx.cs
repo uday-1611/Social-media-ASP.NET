@@ -1,9 +1,7 @@
 ﻿using System;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace socialmedia1
 {
@@ -24,15 +22,18 @@ namespace socialmedia1
 
             // Load fresh user data from database including profile picture
             LoadUserDataFromDatabase();
+            
+            // Load user activities from database
+            LoadUserActivitiesFromDatabase();
         }
 
         private void EnsureProfilePicColumnExists()
         {
             try
             {
-                string cs = System.Configuration.ConfigurationManager.ConnectionStrings["socialmedia1611"].ConnectionString;
+                string cs = ConfigurationManager.ConnectionStrings["socialmedia1611"].ConnectionString;
 
-                using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(cs))
+                using (SqlConnection con = new SqlConnection(cs))
                 {
                     // Check if profile_pic column exists
                     string checkQuery = @"
@@ -41,7 +42,7 @@ namespace socialmedia1
                         WHERE TABLE_NAME = 'Users' 
                         AND COLUMN_NAME = 'profile_pic'";
 
-                    using (System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(checkQuery, con))
+                    using (SqlCommand cmd = new SqlCommand(checkQuery, con))
                     {
                         con.Open();
                         int columnExists = (int)cmd.ExecuteScalar();
@@ -51,11 +52,10 @@ namespace socialmedia1
                             // Column doesn't exist, create it
                             string createColumnQuery = "ALTER TABLE Users ADD profile_pic VARCHAR(MAX) NULL";
                             
-                            using (System.Data.SqlClient.SqlCommand createCmd = new System.Data.SqlClient.SqlCommand(createColumnQuery, con))
+                            using (SqlCommand createCmd = new SqlCommand(createColumnQuery, con))
                             {
                                 createCmd.ExecuteNonQuery();
-                                // Optional: Log that column was created
-                                System.Diagnostics.Trace.WriteLine("profile_pic column created automatically in userprofile");
+                                System.Diagnostics.Trace.WriteLine("profile_pic column created automatically");
                             }
                         }
                     }
@@ -63,26 +63,26 @@ namespace socialmedia1
             }
             catch (Exception ex)
             {
-                // Log error but don't break the application
-                System.Diagnostics.Trace.WriteLine("Error ensuring profile_pic column in userprofile: " + ex.Message);
+                // Log error but don't break application
+                System.Diagnostics.Trace.WriteLine("Error ensuring profile_pic column: " + ex.Message);
             }
         }
 
         private void LoadUserDataFromDatabase()
         {
             int userId = Convert.ToInt32(Session["UserID"]);
-            string cs = System.Configuration.ConfigurationManager.ConnectionStrings["socialmedia1611"].ConnectionString;
+            string cs = ConfigurationManager.ConnectionStrings["socialmedia1611"].ConnectionString;
 
-            using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(cs))
+            using (SqlConnection con = new SqlConnection(cs))
             {
                 string query = @"SELECT FirstName, LastName, Email, Username, profile_pic FROM Users WHERE Id = @Id";
 
-                using (System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@Id", userId);
 
                     con.Open();
-                    using (System.Data.SqlClient.SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                         {
@@ -151,6 +151,148 @@ namespace socialmedia1
             
             // Redirect to login page
             Response.Redirect("login.aspx");
+        }
+
+        protected void btnCreatePost_Click(object sender, EventArgs e)
+        {
+            if (Session["UserID"] == null)
+            {
+                Response.Redirect("login.aspx");
+                return;
+            }
+
+            string postContent = txtPostContent.Text.Trim();
+            string mediaUrl = "";
+            
+            // Handle image upload
+            if (fuPostImage.HasFile)
+            {
+                try
+                {
+                    // Convert image to base64 for storage
+                    using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+                    {
+                        fuPostImage.PostedFile.InputStream.CopyTo(ms);
+                        byte[] imageBytes = ms.ToArray();
+                        string base64String = Convert.ToBase64String(imageBytes);
+                        
+                        // Create a data URL for the image
+                        mediaUrl = "data:image/jpeg;base64," + base64String;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log error but continue with text-only post
+                    System.Diagnostics.Trace.WriteLine("Error uploading post image: " + ex.Message);
+                }
+            }
+
+            // Validate post content
+            if (string.IsNullOrEmpty(postContent) && string.IsNullOrEmpty(mediaUrl))
+            {
+                // Show error message (you could add a label for this)
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "PostError", 
+                    "alert('Please add some content or an image to create a post.');", true);
+                return;
+            }
+
+            int userId = Convert.ToInt32(Session["UserID"]);
+            string cs = ConfigurationManager.ConnectionStrings["socialmedia1611"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                string query = @"
+                    INSERT INTO Posts (user_id, content, media_url, created_at)
+                    VALUES (@UserID, @Content, @MediaUrl, GETDATE())";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@Content", (object)postContent ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@MediaUrl", (object)mediaUrl ?? DBNull.Value);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            // Clear form
+            txtPostContent.Text = "";
+            
+            // Show success message
+            Page.ClientScript.RegisterStartupScript(this.GetType(), "PostSuccess", 
+                "alert('Post created successfully!');", true);
+
+            // Reload user activities to show the new post
+            LoadUserActivitiesFromDatabase();
+        }
+
+private void LoadUserActivitiesFromDatabase()
+        {
+            try
+            {
+                int userId = Convert.ToInt32(Session["UserID"]);
+                string cs = ConfigurationManager.ConnectionStrings["socialmedia1611"].ConnectionString;
+                List<string> userPostsJson = new List<string>();
+
+                using (SqlConnection con = new SqlConnection(cs))
+                {
+                    // Load user's posts from Posts table
+                    string postsQuery = "SELECT post_id, content, media_url, created_at FROM Posts WHERE user_id = @UserID ORDER BY created_at DESC";
+
+                    using (SqlCommand cmd = new SqlCommand(postsQuery, con))
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", userId);
+
+                        con.Open();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string content = reader["content"]?.ToString() ?? "Untitled Post";
+                                string mediaUrl = reader["media_url"]?.ToString() ?? "";
+                                string createdAt = reader["created_at"]?.ToString() ?? DateTime.Now.ToString();
+                                
+                                // Create post JSON object
+                                string postJson = $"{{" +
+                                    $"\"id\": {reader["post_id"]}," +
+                                    $"\"title\": \"{content.Replace("\"", "\\\"")}\"," +
+                                    $"\"description\": \"Posted on {Convert.ToDateTime(createdAt).ToString("MMM dd, yyyy")}\"," +
+                                    $"\"image\": \"{mediaUrl}\"," +
+                                    $"\"likes\": {new Random().Next(10, 500)}," +
+                                    $"\"comments\": {new Random().Next(5, 100)}," +
+                                    $"\"shares\": {new Random().Next(1, 50)}" +
+                                    $"}}";
+                                
+                                userPostsJson.Add(postJson);
+                            }
+                        }
+                    }
+
+                    // Register user posts as JavaScript array
+                    string postsArray = "[" + string.Join(",", userPostsJson) + "]";
+
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "UserPosts", 
+                        $"window.userPosts = {postsArray};", true);
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "UserReels", 
+                        "window.userReels = [];", true);
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "UserSaved", 
+                        "window.userSaved = [];", true);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error but don't break the application
+                System.Diagnostics.Trace.WriteLine("Error loading user posts: " + ex.Message);
+                
+                // Register empty arrays as fallback
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "UserPosts", 
+                    "window.userPosts = [];", true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "UserReels", 
+                    "window.userReels = [];", true);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "UserSaved", 
+                    "window.userSaved = [];", true);
+            }
         }
     }
 }
