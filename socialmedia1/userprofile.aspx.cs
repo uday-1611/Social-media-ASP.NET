@@ -17,6 +17,20 @@ namespace socialmedia1
                 return;
             }
 
+            // Check if post was just created (after redirect)
+            if (Request.QueryString["postcreated"] == "true" && Session["PostCreated"] != null)
+            {
+                // Show success message
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "PostSuccess", 
+                    "showPostSuccessMessage();", true);
+                
+                // Clear session flag
+                Session["PostCreated"] = null;
+                
+                // Clean URL by redirecting without query parameter
+                Response.Redirect("userprofile.aspx");
+            }
+
             // Ensure profile_pic column exists in database
             EnsureProfilePicColumnExists();
 
@@ -219,12 +233,9 @@ namespace socialmedia1
             // Clear form
             txtPostContent.Text = "";
             
-            // Show success message
-            Page.ClientScript.RegisterStartupScript(this.GetType(), "PostSuccess", 
-                "alert('Post created successfully!');", true);
-
-            // Reload user activities to show the new post
-            LoadUserActivitiesFromDatabase();
+            // Show success message and redirect to feed to show new post
+            Session["PostCreated"] = true;
+            Response.Redirect("Feed.aspx");
         }
 
 private void LoadUserActivitiesFromDatabase()

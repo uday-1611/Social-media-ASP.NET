@@ -5,6 +5,7 @@ using System.Web.UI.WebControls;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Collections.Generic;
+using System.IO;
 
 namespace socialmedia1
 {
@@ -20,11 +21,35 @@ namespace socialmedia1
                 return;
             }
 
-            // Load user profile image
-            LoadUserProfileImage();
-            
-            // Load all posts for feed
-            LoadPosts();
+            // Only load posts on initial page load, not on postback
+            if (!IsPostBack)
+            {
+                // Check if user was redirected after creating a post
+                if (Session["PostCreated"] != null && (bool)Session["PostCreated"] == true)
+                {
+                    // Clear session flag immediately
+                    Session["PostCreated"] = null;
+                    
+                    // Load posts first to ensure data is available
+                    LoadPosts();
+                    
+                    // Show success message after posts are loaded
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "NewPostSuccess", 
+                        "showSuccessMessage('Post created successfully! Your post is now at the top of the feed.');", true);
+                    
+                    // Set a flag to indicate we're coming from post creation (posts should already be loaded)
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "FromPostCreation", 
+                        "window.fromPostCreation = true;", true);
+                }
+                else
+                {
+                    // Load user profile image
+                    LoadUserProfileImage();
+                    
+                    // Load all posts for feed
+                    LoadPosts();
+                }
+            }
         }
 
         private void LoadUserProfileImage()
@@ -138,7 +163,7 @@ namespace socialmedia1
                     string postsArray = "[" + string.Join(",", feedPostsJson) + "]";
 
                     Page.ClientScript.RegisterStartupScript(this.GetType(), "FeedPosts", 
-                        $"window.feedPosts = {postsArray};", true);
+                        $"window.feedPosts = {postsArray}; window.currentUserId = {Session["UserID"]};", true);
                 }
             }
             catch (Exception ex)
@@ -148,7 +173,98 @@ namespace socialmedia1
                 
                 // Register empty array as fallback
                 Page.ClientScript.RegisterStartupScript(this.GetType(), "FeedPosts", 
-                    "window.feedPosts = [];", true);
+                    $"window.feedPosts = []; window.currentUserId = {Session["UserID"]};", true);
+            }
+        }
+
+        protected void btnUploadReel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Session["UserID"] == null)
+                {
+                    Response.Redirect("login.aspx");
+                    return;
+                }
+
+                string reelName = txtReelName.Text.Trim();
+
+                if (string.IsNullOrEmpty(reelName))
+                {
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ReelError_Name",
+                        "alert('Please enter a reel name.');", true);
+                    return;
+                }
+
+                if (!fuReelVideo.HasFile)
+                {
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ReelError_File",
+                        "alert('Please select a video file to upload.');", true);
+                    return;
+                }
+
+                string extension = Path.GetExtension(fuReelVideo.FileName).ToLower();
+                string[] allowedExtensions = new[] { ".mp4", ".mov", ".wmv", ".avi", ".mkv", ".webm" };
+
+                if (Array.IndexOf(allowedExtensions, extension) < 0)
+                {
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "ReelError_Ext",
+                        "alert('Invalid video format. Please upload a valid video file.');", true);
+                    return;
+                }
+
+                int userId = Convert.ToInt32(Session["UserID"]);
+
+                string reelsRoot = Server.MapPath("~/Uploads/Reels");
+                if (!Directory.Exists(reelsRoot))
+                {
+                    Directory.CreateDirectory(reelsRoot);
+                }
+
+                string safeReelName = string.Concat(reelName.Split(Path.GetInvalidFileNameChars()));
+                if (string.IsNullOrWhiteSpace(safeReelName))
+                {
+                    safeReelName = "Reel";
+                }
+
+                string reelFolderName = safeReelName + "_" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                string reelFolderPath = Path.Combine(reelsRoot, reelFolderName);
+                Directory.CreateDirectory(reelFolderPath);
+
+                string fileName = Path.GetFileName(fuReelVideo.FileName);
+                string savedFilePath = Path.Combine(reelFolderPath, fileName);
+                fuReelVideo.SaveAs(savedFilePath);
+
+                string relativeVideoPath = "~/Uploads/Reels/" + reelFolderName + "/" + fileName;
+
+                string cs = ConfigurationManager.ConnectionStrings["socialmedia1611"].ConnectionString;
+
+                using (SqlConnection con = new SqlConnection(cs))
+                {
+                    string insertQuery = @"INSERT INTO Reels (user_id, reel_name, video_path, created_at)
+                                           VALUES (@UserID, @ReelName, @VideoPath, GETDATE())";
+
+                    using (SqlCommand cmd = new SqlCommand(insertQuery, con))
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", userId);
+                        cmd.Parameters.AddWithValue("@ReelName", reelName);
+                        cmd.Parameters.AddWithValue("@VideoPath", relativeVideoPath);
+
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                txtReelName.Text = string.Empty;
+
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ReelSuccess",
+                    "hideAddReelModal(); showSuccessMessage('Reel uploaded successfully!');", true);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine("Error uploading reel: " + ex.Message);
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "ReelError_Unexpected",
+                    "alert('An error occurred while uploading the reel. Please try again.');", true);
             }
         }
     }

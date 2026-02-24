@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Feed.aspx.cs" Inherits="socialmedia1.Feed" %>
+﻿﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Feed.aspx.cs" Inherits="socialmedia1.Feed" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -957,6 +957,62 @@
             transform: translateY(-1px);
         }
 
+        .create-dropdown {
+            position: relative;
+        }
+
+        .create-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            margin-top: 8px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .create-dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            width: 100%;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }
+
         .reel-card {
             background: rgba(15, 23, 42, 0.9);
             border-radius: 0;
@@ -1080,7 +1136,7 @@
     </style>
 </head>
 <body>
-    <form id="form1" runat="server">
+    <form id="form1" runat="server" enctype="multipart/form-data">
         <div class="feed-wrapper">
             <!-- Header -->
             <header class="home-header">
@@ -1162,10 +1218,27 @@
                     
                     <div class="sidebar-section">
                         <div class="sidebar-title">Create</div>
-                        <button type="button" class="create-post-btn">
-                            <i class="fa-solid fa-plus"></i>
-                            Create Post
-                        </button>
+                        <div class="create-dropdown">
+                            <button type="button" class="create-post-btn" onclick="toggleCreateDropdown(event)">
+                                <i class="fa-solid fa-plus"></i>
+                                Create
+                                <i class="fa-solid fa-chevron-down" style="margin-left: auto; font-size: 0.8rem;"></i>
+                            </button>
+                            <div class="create-dropdown-menu" id="createDropdown">
+                                <button type="button" class="dropdown-item" onclick="showCreatePostModal(event)">
+                                    <i class="fa-solid fa-image"></i>
+                                    Create Post
+                                </button>
+                                <button type="button" class="dropdown-item" onclick="showAddReelModal(event)">
+                                    <i class="fa-solid fa-video"></i>
+                                    Add Reel
+                                </button>
+                                <button type="button" class="dropdown-item" onclick="showAddStoryModal(event)">
+                                    <i class="fa-solid fa-circle"></i>
+                                    Add Story
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="sidebar-section">
@@ -1193,174 +1266,8 @@
 
                 <!-- Main Content -->
                 <main class="home-content">
-                    <div class="content-grid">
-                        <!-- Sample Content Card 1 -->
-                        <article class="content-card">
-                            <img src="https://picsum.photos/400/300?random=1" alt="Content" class="card-media" />
-                            <div class="card-body">
-                                <h3 class="card-title">Amazing Sunset Photography</h3>
-                                <p class="card-description">Captured this beautiful sunset at the beach today. Nature never fails to amaze!</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-actions">
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-heart"></i>
-                                        <span>234</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-comment"></i>
-                                        <span>45</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-share"></i>
-                                        <span>12</span>
-                                    </button>
-                                </div>
-                                <button class="card-action">
-                                    <i class="fa-regular fa-bookmark"></i>
-                                </button>
-                            </div>
-                        </article>
-
-                        <!-- Sample Content Card 2 -->
-                        <article class="content-card">
-                            <img src="https://picsum.photos/400/300?random=2" alt="Content" class="card-media" />
-                            <div class="card-body">
-                                <h3 class="card-title">Urban Architecture</h3>
-                                <p class="card-description">Modern city architecture never gets old. Love the geometric patterns and clean lines.</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-actions">
-                                    <button class="card-action liked">
-                                        <i class="fa-solid fa-heart"></i>
-                                        <span>567</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-comment"></i>
-                                        <span>89</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-share"></i>
-                                        <span>34</span>
-                                    </button>
-                                </div>
-                                <button class="card-action">
-                                    <i class="fa-regular fa-bookmark"></i>
-                                </button>
-                            </div>
-                        </article>
-
-                        <!-- Sample Content Card 3 -->
-                        <article class="content-card">
-                            <img src="https://picsum.photos/400/300?random=3" alt="Content" class="card-media" />
-                            <div class="card-body">
-                                <h3 class="card-title">Nature's Beauty</h3>
-                                <p class="card-description">Found this hidden gem during my morning hike. Sometimes the best views require a little effort.</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-actions">
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-heart"></i>
-                                        <span>123</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-comment"></i>
-                                        <span>28</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-share"></i>
-                                        <span>8</span>
-                                    </button>
-                                </div>
-                                <button class="card-action">
-                                    <i class="fa-regular fa-bookmark"></i>
-                                </button>
-                            </div>
-                        </article>
-
-                        <!-- Sample Content Card 4 -->
-                        <article class="content-card">
-                            <img src="https://picsum.photos/400/300?random=4" alt="Content" class="card-media" />
-                            <div class="card-body">
-                                <h3 class="card-title">Street Art Culture</h3>
-                                <p class="card-description">Street art adds so much character to our cities. Love discovering new murals around town.</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-actions">
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-heart"></i>
-                                        <span>890</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-comment"></i>
-                                        <span>156</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-share"></i>
-                                        <span>67</span>
-                                    </button>
-                                </div>
-                                <button class="card-action">
-                                    <i class="fa-regular fa-bookmark"></i>
-                                </button>
-                            </div>
-                        </article>
-
-                        <!-- Sample Content Card 5 -->
-                        <article class="content-card">
-                            <img src="https://picsum.photos/400/300?random=5" alt="Content" class="card-media" />
-                            <div class="card-body">
-                                <h3 class="card-title">Coffee Moments</h3>
-                                <p class="card-description">Perfect coffee, perfect morning. Sometimes it's the simple things that bring the most joy.</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-actions">
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-heart"></i>
-                                        <span>456</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-comment"></i>
-                                        <span>78</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-share"></i>
-                                        <span>23</span>
-                                    </button>
-                                </div>
-                                <button class="card-action">
-                                    <i class="fa-regular fa-bookmark"></i>
-                                </button>
-                            </div>
-                        </article>
-
-                        <!-- Sample Content Card 6 -->
-                        <article class="content-card">
-                            <img src="https://picsum.photos/400/300?random=6" alt="Content" class="card-media" />
-                            <div class="card-body">
-                                <h3 class="card-title">Tech Innovation</h3>
-                                <p class="card-description">The future is here! Excited about all the new technology innovations happening around us.</p>
-                            </div>
-                            <div class="card-footer">
-                                <div class="card-actions">
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-heart"></i>
-                                        <span>342</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-comment"></i>
-                                        <span>91</span>
-                                    </button>
-                                    <button class="card-action">
-                                        <i class="fa-regular fa-share"></i>
-                                        <span>45</span>
-                                    </button>
-                                </div>
-                                <button class="card-action">
-                                    <i class="fa-regular fa-bookmark"></i>
-                                </button>
-                            </div>
-                        </article>
+                    <div class="content-grid" id="feedPostsContainer">
+                        <!-- Database posts will be loaded here dynamically -->
                     </div>
                 </main>
 
@@ -1461,6 +1368,32 @@
                 </aside>
             </div>
         </div>
+
+        <!-- Add Reel Modal (server-side upload) -->
+        <div id="addReelModal" class="add-reel-modal" runat="server">
+            <div class="add-reel-modal-content">
+                <div class="modal-header">
+                    <h3>Add New Reel</h3>
+                    <button type="button" class="close-add-reel-modal">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txtReelName">Reel Name</label>
+                        <asp:TextBox ID="txtReelName" runat="server" CssClass="form-control" placeholder="Enter reel name..."></asp:TextBox>
+                    </div>
+                    <div class="form-group">
+                        <label for="fuReelVideo">Upload Video</label>
+                        <asp:FileUpload ID="fuReelVideo" runat="server" CssClass="form-control" accept="video/*" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel-add-reel">Cancel</button>
+                    <asp:Button ID="btnUploadReel" runat="server" Text="Upload Reel" CssClass="btn btn-primary" OnClick="btnUploadReel_Click" />
+                </div>
+            </div>
+        </div>
     </form>
 
     <!-- Create Post Modal -->
@@ -1548,6 +1481,135 @@
     </div>
 
     <script>
+        // Load posts from database and display in single column
+        function loadFeedPosts() {
+            const feedContainer = document.getElementById('feedPostsContainer');
+            if (!feedContainer) return;
+            
+            // Check if posts are already available (immediate display)
+            if (typeof window.feedPosts !== 'undefined' && window.feedPosts.length > 0) {
+                feedContainer.innerHTML = '';
+                
+                // Display each post in single column (newest first)
+                window.feedPosts.forEach(post => {
+                    const postCard = createFeedPostCard(post);
+                    feedContainer.appendChild(postCard);
+                });
+                return;
+            }
+            
+            // If coming from post creation, display immediately without loading
+            if (window.fromPostCreation) {
+                // Clear the flag immediately
+                window.fromPostCreation = false;
+                
+                // Check for posts immediately (should be available since server loaded them)
+                if (typeof window.feedPosts !== 'undefined' && window.feedPosts.length > 0) {
+                    feedContainer.innerHTML = '';
+                    
+                    // Display each post in single column (newest first)
+                    window.feedPosts.forEach(post => {
+                        const postCard = createFeedPostCard(post);
+                        feedContainer.appendChild(postCard);
+                    });
+                    return;
+                }
+            }
+            
+            // Show loading state only if data is not yet available (normal scenario)
+            feedContainer.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 16px; opacity: 0.5;"></i>
+                    <p style="font-size: 1.1rem; margin-bottom: 8px;">Loading posts...</p>
+                </div>
+            `;
+            
+            // Wait for server data to be available
+            const checkForPosts = () => {
+                if (typeof window.feedPosts !== 'undefined' && window.feedPosts.length > 0) {
+                    feedContainer.innerHTML = '';
+                    
+                    // Display each post in single column (newest first)
+                    window.feedPosts.forEach(post => {
+                        const postCard = createFeedPostCard(post);
+                        feedContainer.appendChild(postCard);
+                    });
+                } else if (typeof window.feedPosts !== 'undefined' && window.feedPosts.length === 0) {
+                    // Show no posts message only after confirming data is loaded
+                    feedContainer.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="fa-solid fa-inbox" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.5;"></i>
+                            <p style="font-size: 1.1rem; margin-bottom: 8px;">No posts yet</p>
+                            <p style="font-size: 0.9rem;">Be the first to share something!</p>
+                        </div>
+                    `;
+                } else {
+                    // Data not loaded yet, retry after a short delay
+                    setTimeout(checkForPosts, 100);
+                }
+            };
+            
+            // Start checking for posts
+            setTimeout(checkForPosts, 500);
+        }
+
+        function createFeedPostCard(post) {
+            const card = document.createElement('article');
+            card.className = 'content-card';
+            card.style.cssText = 'height: 550px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;';
+            
+            const profileImage = post.profilePic || `https://i.pravatar.cc/150?img=${post.userId}`;
+            
+            card.innerHTML = `
+                <div style="padding: 12px; border-bottom: 1px solid rgba(148, 163, 184, 0.2);">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <img src="${profileImage}" alt="${post.displayName}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(148, 163, 184, 0.6);" />
+                        <div style="flex: 1;">
+                            <div style="font-size: 0.88rem; font-weight: 500; color: var(--text-main);">${post.displayName}</div>
+                            <div style="font-size: 0.76rem; color: var(--text-muted);">@${post.username}</div>
+                        </div>
+                        <div style="font-size: 0.74rem; color: var(--text-muted); margin-left: auto;">${post.createdAt}</div>
+                    </div>
+                </div>
+                ${post.image ? `<img src="${post.image}" alt="Post" style="width: 100%; height: 390px; object-fit: cover; border-radius: 14px;" />` : ''}
+                ${post.content ? `<div style="padding: 8px 12px; font-size: 0.9rem; color: var(--text-main);">${post.content}</div>` : ''}
+                <div style="padding: 12px; border-top: 1px solid rgba(148, 163, 184, 0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 15px;">
+                            <button onclick="event.stopPropagation(); toggleLike(this, ${post.id});" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.9rem; transition: color 0.3s ease;">
+                                <i class="fa-regular fa-heart"></i>
+                                <span>${post.likes}</span>
+                            </button>
+                            <button onclick="event.stopPropagation();" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.9rem; transition: color 0.3s ease;">
+                                <i class="fa-regular fa-comment"></i>
+                                <span>${post.comments}</span>
+                            </button>
+                            <button onclick="event.stopPropagation();" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.9rem; transition: color 0.3s ease;">
+                                <i class="fa-regular fa-share"></i>
+                                <span>${post.shares}</span>
+                            </button>
+                        </div>
+                        <button onclick="event.stopPropagation();" style="background: none; border: none; color: var(--text-muted); cursor: pointer; transition: color 0.3s ease;">
+                            <i class="fa-regular fa-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Add hover effect
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+                this.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.3)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+            
+            return card;
+        }
+
         // Create Post Modal Functions
         function showCreatePostModal() {
             event.preventDefault();
@@ -1566,12 +1628,73 @@
             document.getElementById('imagePreview').style.display = 'none';
         }
 
+        // Create Dropdown Functions
+        function toggleCreateDropdown(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const dropdown = document.getElementById('createDropdown');
+            const isShowing = dropdown.classList.contains('show');
+            
+            // Close all other dropdowns
+            closeAllDropdowns();
+            
+            // Toggle current dropdown
+            if (!isShowing) {
+                dropdown.classList.add('show');
+            }
+        }
+
+        function closeAllDropdowns() {
+            const dropdowns = document.querySelectorAll('.create-dropdown-menu');
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        }
+
+        function showCreatePostModal(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            closeAllDropdowns();
+            document.getElementById('createPostModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showAddReelModal(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            closeAllDropdowns();
+            var modal = document.getElementById('addReelModal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function showAddStoryModal(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            closeAllDropdowns();
+            // For now, show a success message (you can implement the story modal later)
+            showSuccessMessage('Add Story feature coming soon!');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.create-dropdown')) {
+                closeAllDropdowns();
+            }
+        });
+
         // Initialize event listeners when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            // Load posts from database
+            loadFeedPosts();
+
             // Create post button
             const createPostBtn = document.querySelector('.create-post-btn');
             if (createPostBtn) {
-                createPostBtn.addEventListener('click', function(e) {
+                createPostBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     showCreatePostModal();
@@ -1581,7 +1704,7 @@
             // Modal close button
             const closeModalBtn = document.querySelector('.close-modal');
             if (closeModalBtn) {
-                closeModalBtn.addEventListener('click', function(e) {
+            closeModalBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     hideCreatePostModal();
@@ -1591,7 +1714,7 @@
             // Cancel button
             const cancelBtn = document.querySelector('.btn-cancel');
             if (cancelBtn) {
-                cancelBtn.addEventListener('click', function(e) {
+                cancelBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     hideCreatePostModal();
@@ -1601,7 +1724,7 @@
             // Post button
             const postBtn = document.querySelector('.btn-primary');
             if (postBtn) {
-                postBtn.addEventListener('click', function(e) {
+                postBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     savePost();
@@ -1611,11 +1734,11 @@
             // Image preview functionality
             const postImageInput = document.getElementById('postImage');
             if (postImageInput) {
-                postImageInput.addEventListener('change', function(e) {
+                postImageInput.addEventListener('change', function (e) {
                     const file = e.target.files[0];
                     if (file) {
                         const reader = new FileReader();
-                        reader.onload = function(e) {
+                        reader.onload = function (e) {
                             document.getElementById('previewImg').src = e.target.result;
                             document.getElementById('imagePreview').style.display = 'block';
                         };
@@ -1627,7 +1750,7 @@
             // Search functionality
             const searchInput = document.getElementById('searchInput');
             const searchResults = document.getElementById('searchResults');
-            
+
             if (searchInput && searchResults) {
                 // Sample user data for search
                 const users = [
@@ -1641,16 +1764,16 @@
                     { name: 'Ryan Garcia', username: '@ryangarcia', avatar: 'https://i.pravatar.cc/150?img=8', bio: 'Music producer | DJ' }
                 ];
 
-                searchInput.addEventListener('input', function(e) {
+                searchInput.addEventListener('input', function (e) {
                     const query = e.target.value.toLowerCase().trim();
-                    
+
                     if (query.length === 0) {
                         searchResults.style.display = 'none';
                         return;
                     }
 
-                    const filteredUsers = users.filter(user => 
-                        user.name.toLowerCase().includes(query) || 
+                    const filteredUsers = users.filter(user =>
+                        user.name.toLowerCase().includes(query) ||
                         user.username.toLowerCase().includes(query) ||
                         user.bio.toLowerCase().includes(query)
                     );
@@ -1680,7 +1803,7 @@
                 });
 
                 // Hide search results when clicking outside
-                document.addEventListener('click', function(e) {
+                document.addEventListener('click', function (e) {
                     if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
                         searchResults.style.display = 'none';
                     }
@@ -1692,17 +1815,17 @@
             const imageFile = document.getElementById('postImage').files[0];
             const caption = document.getElementById('postCaption').value;
             const tags = document.getElementById('postTags').value;
-            
+
             if (!caption.trim()) {
                 alert('Please add a caption for your post.');
                 return;
             }
-            
+
             // Convert image to base64 if exists
             let imageBase64 = null;
             if (imageFile) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     imageBase64 = e.target.result;
                     createPostInDatabase(imageBase64, caption, tags);
                 };
@@ -1713,31 +1836,43 @@
         }
 
         function createPostInDatabase(imageBase64, caption, tags) {
-            // Create new post card
+            // Get current user info from existing posts or use defaults
+            const currentUser = window.feedPosts && window.feedPosts.length > 0 ? 
+                window.feedPosts.find(p => p.userId === window.currentUserId) : null;
+            
+            // Create new post with proper structure
             const newPost = {
                 id: Date.now(),
-                image: imageBase64 || `https://picsum.photos/400/300?random=${Math.random()}`,
-                title: caption.substring(0, 50) + (caption.length > 50 ? '...' : ''),
-                description: caption,
+                userId: window.currentUserId || 1,
+                username: currentUser ? currentUser.username : 'currentuser',
+                displayName: currentUser ? currentUser.displayName : 'Current User',
+                content: caption,
+                image: imageBase64 || `https://picsum.photos/400/390?random=${Math.random()}`,
+                profilePic: currentUser ? currentUser.profilePic : '',
+                createdAt: 'Just now',
                 likes: 0,
                 comments: 0,
-                shares: 0,
-                timestamp: 'Just now',
-                tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+                shares: 0
             };
-            
-            // Add to beginning of content grid
-            const contentGrid = document.querySelector('.content-grid');
-            const newCard = createPostCard(newPost);
-            contentGrid.insertBefore(newCard, contentGrid.firstChild);
-            
-            // Log activity to UserActivity table
-            logUserActivityToDatabase('post', 'create', caption, imageBase64, tags);
-            
+
+            // Add new post to the beginning of feedPosts array
+            if (typeof window.feedPosts === 'undefined') {
+                window.feedPosts = [];
+            }
+            window.feedPosts.unshift(newPost);
+
+            // Refresh the feed display
+            loadFeedPosts();
+
             hideCreatePostModal();
-            
+
             // Show success message
-            showSuccessMessage('Post created successfully!');
+            showSuccessMessage('Post created successfully! Your post is now at the top of the feed.');
+
+            // Optional: Sync with server after a delay
+            setTimeout(() => {
+                refreshPostsFromServer();
+            }, 1000);
         }
 
         function createPostCard(post) {
@@ -1769,14 +1904,14 @@
                     </button>
                 </div>
             `;
-            
+
             // Add click event to show post modal
-            card.addEventListener('click', function(e) {
+            card.addEventListener('click', function (e) {
                 if (!e.target.closest('.card-action')) {
                     showPostModal(post);
                 }
             });
-            
+
             return card;
         }
 
@@ -1784,7 +1919,7 @@
             const icon = button.querySelector('i');
             const count = button.querySelector('span');
             const isLiked = icon.classList.contains('fa-solid');
-            
+
             if (isLiked) {
                 icon.classList.remove('fa-solid');
                 icon.classList.add('fa-regular');
@@ -1796,7 +1931,7 @@
                 button.classList.add('liked');
                 count.textContent = parseInt(count.textContent) + 1;
             }
-            
+
             // Log like activity
             logUserActivityToDatabase('post', 'like', `Post ID: ${postId}`, null, null);
         }
@@ -1804,9 +1939,9 @@
         function logUserActivityToDatabase(activityType, action, content, mediaUrl, tags) {
             // In a real application, this would make an AJAX call to the server
             // For demo purposes, we'll simulate the database call
-            
+
             const activityData = {
-                UserID: '<%= Session["UserID"] %>',
+                UserID: window.currentUserId || 1,
                 ActivityType: activityType,
                 ActionType: action,
                 Content: content,
@@ -2171,7 +2306,7 @@
         }
 
         // Close modal when clicking outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             var modal = document.getElementById('addReelModal');
             if (event.target == modal) {
                 hideAddReelModal();
