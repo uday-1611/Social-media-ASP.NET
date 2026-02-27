@@ -1,4 +1,4 @@
-﻿﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Feed.aspx.cs" Inherits="socialmedia1.Feed" %>
+﻿﻿﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Feed.aspx.cs" Inherits="socialmedia1.Feed" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +14,9 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
         :root {
@@ -37,7 +40,7 @@
             margin: 0;
             padding: 0;
             color: var(--text-main);
-            overflow: hidden;
+            overflow: hidden; /* will be relaxed on small screens */
         }
 
         /* Hide scrollbars but keep scrolling functionality */
@@ -477,6 +480,218 @@
 
         .post-modal-action.liked {
             color: #ef4444;
+        }
+
+        /* Reels Page Styles */
+        #reelsPageContainer::-webkit-scrollbar { display: none; }
+        .reel-page-item {
+            width: 100%;
+            height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: #000;
+        }
+        .reel-page-item video {
+            height: 100vh;
+            max-width: 100%;
+            object-fit: contain;
+        }
+        .reel-page-info {
+            position: absolute;
+            bottom: 60px;
+            left: 20px;
+            right: 80px;
+            color: #fff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+        }
+        .reel-page-info .reel-username {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .reel-page-info .reel-name {
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
+        .reel-page-info .reel-date {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 3px;
+        }
+        .reel-page-side-actions {
+            position: absolute;
+            right: 16px;
+            bottom: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            align-items: center;
+        }
+        .reel-side-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .reel-side-btn:hover { background: rgba(255,255,255,0.28); }
+        .reel-side-btn span { font-size: 0.65rem; }
+
+        /* Comment Modal Styles */
+        .comment-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .comment-modal.open {
+            display: flex;
+        }
+        .comment-modal-content {
+            background: var(--card-bg, #0f172a);
+            border: 1px solid rgba(148,163,184,0.3);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 560px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .comment-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(148,163,184,0.2);
+        }
+        .comment-modal-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main, #f1f5f9);
+        }
+        .comment-modal-header button {
+            background: none;
+            border: none;
+            color: var(--text-muted, #94a3b8);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        .comment-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .comment-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .comment-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: rgba(59,130,246,0.2);
+        }
+        .comment-avatar-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(59,130,246,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3b82f6;
+            flex-shrink: 0;
+        }
+        .comment-bubble {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 8px 12px;
+            flex: 1;
+        }
+        .comment-bubble .comment-username {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 3px;
+        }
+        .comment-bubble .comment-text {
+            font-size: 0.88rem;
+            color: var(--text-main, #f1f5f9);
+            line-height: 1.4;
+        }
+        .comment-bubble .comment-time {
+            font-size: 0.72rem;
+            color: var(--text-muted, #94a3b8);
+            margin-top: 4px;
+        }
+        .comment-input-area {
+            padding: 12px 16px;
+            border-top: 1px solid rgba(148,163,184,0.2);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .comment-input-area input {
+            flex: 1;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(148,163,184,0.25);
+            border-radius: 20px;
+            padding: 9px 16px;
+            color: var(--text-main, #f1f5f9);
+            font-size: 0.88rem;
+            outline: none;
+        }
+        .comment-input-area input::placeholder {
+            color: var(--text-muted, #94a3b8);
+        }
+        .comment-input-area input:focus {
+            border-color: #3b82f6;
+        }
+        .comment-submit-btn {
+            background: linear-gradient(135deg, #3b82f6, #ec4899);
+            border: none;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+        .comment-submit-btn:hover { opacity: 0.85; }
+        .comment-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .comment-empty {
+            text-align: center;
+            color: var(--text-muted, #94a3b8);
+            font-size: 0.9rem;
+            padding: 30px 0;
         }
 
         .sidebar-section {
@@ -1118,19 +1333,66 @@
             transform: scale(0.95);
         }
 
-        @media (max-width: 900px) {
+        /* Tablet layout */
+        @media (max-width: 1024px) {
+            .home-sidebar {
+                width: 200px;
+            }
+
+            .home-right-sidebar {
+                width: 260px;
+            }
+        }
+
+        /* Mobile layout */
+        @media (max-width: 768px) {
             body {
-                padding: 12px;
+                padding: 0;
+                overflow: auto; /* allow scrolling on mobile */
             }
 
             .feed-wrapper {
-                grid-template-columns: 1fr;
-                max-width: 520px;
+                height: auto;
             }
 
-            .feed-main {
-                border-right: none;
-                border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+            .home-main {
+                flex-direction: column;
+                overflow: visible;
+            }
+
+            .home-sidebar,
+            .home-right-sidebar {
+                width: 100%;
+                border: none;
+                border-top: 1px solid rgba(148, 163, 184, 0.3);
+                order: 2;
+            }
+
+            .home-content {
+                order: 1;
+                padding: 12px;
+            }
+
+            .home-header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .home-nav {
+                order: 3;
+                width: 100%;
+                justify-content: space-around;
+                margin-top: 4px;
+            }
+
+            .search-container {
+                flex: 1 1 100%;
+                order: 2;
+                margin-top: 8px;
+            }
+
+            .home-actions {
+                order: 1;
             }
         }
     </style>
@@ -1243,7 +1505,7 @@
                     
                     <div class="sidebar-section">
                         <div class="sidebar-title">Quick Links</div>
-                        <div class="sidebar-item">
+                        <div class="sidebar-item" onclick="openReelsPage()" style="cursor:pointer;">
                             <div class="sidebar-icon">
                                 <i class="fa-solid fa-film"></i>
                             </div>
@@ -1266,6 +1528,16 @@
 
                 <!-- Main Content -->
                 <main class="home-content">
+                    <!-- Reels Strip -->
+                    <div id="reelsSection" style="margin-bottom: 20px; display: none;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Reels</span>
+                        </div>
+                        <div id="reelsContainer" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; scrollbar-color: rgba(148,163,184,0.3) transparent;">
+                            <!-- Reels loaded dynamically -->
+                        </div>
+                    </div>
+
                     <div class="content-grid" id="feedPostsContainer">
                         <!-- Database posts will be loaded here dynamically -->
                     </div>
@@ -1352,8 +1624,7 @@
                                 <div style="font-size: 0.75rem; color: var(--text-muted);">Posts</div>
                             </div>
                             <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
-                                <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary);">156</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Following</div>
+                                <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary);">156</div>                                <div style="font-size: 0.75rem; color: var(--text-muted);">Following</div>
                             </div>
                             <div style="text-align: center; padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
                                 <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary);">892</div>
@@ -1374,7 +1645,7 @@
             <div class="add-reel-modal-content">
                 <div class="modal-header">
                     <h3>Add New Reel</h3>
-                    <button type="button" class="close-add-reel-modal">
+                    <button type="button" class="close-add-reel-modal" onclick="hideAddReelModal();">
                         <i class="fa-solid fa-times"></i>
                     </button>
                 </div>
@@ -1389,8 +1660,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-cancel-add-reel">Cancel</button>
-                    <asp:Button ID="btnUploadReel" runat="server" Text="Upload Reel" CssClass="btn btn-primary" OnClick="btnUploadReel_Click" />
+                    <button type="button" class="btn btn-cancel-add-reel" onclick="hideAddReelModal();">Cancel</button>
+                    <asp:Button ID="btnUploadReel" runat="server" Text="Upload Reel" CssClass="btn btn-upload-reel" OnClick="btnUploadReel_Click" />
                 </div>
             </div>
         </div>
@@ -1462,7 +1733,7 @@
                             <i class="fa-regular fa-heart"></i>
                             <span>Like</span>
                         </button>
-                        <button type="button" class="post-modal-action">
+                        <button type="button" class="post-modal-action" onclick="if(currentPostData) openCommentModal(currentPostData.id);">
                             <i class="fa-regular fa-comment"></i>
                             <span>Comment</span>
                         </button>
@@ -1476,6 +1747,67 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reels Page Modal (TikTok-style) -->
+    <div id="reelsPageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:2500; flex-direction:row;">
+        <!-- Close button -->
+        <button type="button" onclick="closeReelsPage()" style="position:absolute; top:18px; left:20px; background:rgba(255,255,255,0.15); border:none; color:#fff; width:40px; height:40px; border-radius:50%; font-size:1.1rem; cursor:pointer; z-index:2600; display:flex; align-items:center; justify-content:center;">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <span style="position:absolute; top:22px; left:72px; color:#fff; font-size:1rem; font-weight:600; z-index:2600;">Reels</span>
+
+        <!-- Reels vertical scroll area -->
+        <div id="reelsPageContainer" style="width:100%; height:100%; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none;">
+            <!-- Reel items injected here -->
+        </div>
+
+        <!-- Empty state -->
+        <div id="reelsPageEmpty" style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; flex-direction:column; gap:12px; color:rgba(255,255,255,0.5);">
+            <i class="fa-solid fa-film" style="font-size:3rem;"></i>
+            <p style="font-size:1rem;">No reels yet. Upload the first one!</p>
+        </div>
+    </div>
+
+    <!-- Reel Viewer Modal -->
+    <div id="reelViewerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:3000; align-items:center; justify-content:center;">
+        <button type="button" onclick="closeReelViewer()" style="position:absolute; top:20px; right:24px; background:none; border:none; color:#fff; font-size:1.6rem; cursor:pointer; z-index:3001;"><i class="fa-solid fa-times"></i></button>
+        <button type="button" id="reelPrevBtn" onclick="navigateReel(-1)" style="position:absolute; left:20px; background:rgba(255,255,255,0.15); border:none; color:#fff; width:44px; height:44px; border-radius:50%; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-chevron-left"></i></button>
+        <div style="display:flex; flex-direction:column; align-items:center; max-width:420px; width:100%;">
+            <video id="reelViewerVideo" controls autoplay style="width:100%; max-height:70vh; border-radius:14px; background:#000;"></video>
+            <div style="margin-top:14px; text-align:center; width:100%; padding:0 12px;">
+                <div id="reelViewerName" style="font-size:1rem; font-weight:600; color:#fff;"></div>
+                <div id="reelViewerUser" style="font-size:0.82rem; color:rgba(255,255,255,0.6); margin-top:4px;"></div>
+                <div id="reelViewerDate" style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin-top:2px;"></div>
+                <div style="margin-top:14px; display:flex; justify-content:center;">
+                    <button type="button" id="reelLikeBtn" onclick="toggleReelLike()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:24px; padding:8px 20px; color:#fff; cursor:pointer; display:flex; align-items:center; gap:8px; font-size:0.95rem; transition:background 0.2s;">
+                        <i id="reelLikeIcon" class="fa-regular fa-heart"></i>
+                        <span id="reelLikeCount">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <button type="button" id="reelNextBtn" onclick="navigateReel(1)" style="position:absolute; right:20px; background:rgba(255,255,255,0.15); border:none; color:#fff; width:44px; height:44px; border-radius:50%; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="comment-modal" onclick="handleCommentModalOutsideClick(event)">
+        <div class="comment-modal-content">
+            <div class="comment-modal-header">
+                <h3>Comments</h3>
+                <button type="button" onclick="hideCommentModal()"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="comment-list" id="commentList">
+                <div class="comment-empty">Loading comments...</div>
+            </div>
+            <div class="comment-input-area">
+                <input type="text" id="commentInput" placeholder="Write a comment..." maxlength="500"
+                       onkeydown="if(event.key==='Enter'){ event.preventDefault(); submitComment(); }" />
+                <button type="button" class="comment-submit-btn" id="commentSubmitBtn" onclick="submitComment()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -1571,18 +1903,28 @@
                         <div style="font-size: 0.74rem; color: var(--text-muted); margin-left: auto;">${post.createdAt}</div>
                     </div>
                 </div>
-                ${post.image ? `<img src="${post.image}" alt="Post" style="width: 100%; height: 390px; object-fit: cover; border-radius: 14px;" />` : ''}
+                ${post.image ? (post.isVideo ? 
+                    `<div style="position:relative; width:100%; height:390px; background:#000; border-radius:14px; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                        <video src="${post.image}" style="width:100%; height:390px; object-fit:cover;" muted preload="metadata"></video>
+                        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.3);">
+                            <div style="background:rgba(255,255,255,0.2); border-radius:50%; width:56px; height:56px; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa-solid fa-play" style="color:#fff; font-size:1.4rem; margin-left:4px;"></i>
+                            </div>
+                        </div>
+                     </div>`
+                    : `<img src="${post.image}" alt="Post" style="width: 100%; height: 390px; object-fit: cover; border-radius: 14px;" />`)
+                : ''}
                 ${post.content ? `<div style="padding: 8px 12px; font-size: 0.9rem; color: var(--text-main);">${post.content}</div>` : ''}
                 <div style="padding: 12px; border-top: 1px solid rgba(148, 163, 184, 0.2);">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; gap: 15px;">
-                            <button onclick="event.stopPropagation(); toggleLike(this, ${post.id});" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.9rem; transition: color 0.3s ease;">
-                                <i class="fa-regular fa-heart"></i>
+                            <button type="button" onclick="event.stopPropagation(); toggleLike(this, ${post.id});" class="${post.isLiked ? 'card-action liked' : 'card-action'}" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.9rem; transition: color 0.3s ease;">
+                                <i class="${post.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
                                 <span>${post.likes}</span>
                             </button>
-                            <button onclick="event.stopPropagation();" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.9rem; transition: color 0.3s ease;">
+                            <button type="button" onclick="event.stopPropagation(); openCommentModal(${post.id});" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.9rem; transition: color 0.3s ease;">
                                 <i class="fa-regular fa-comment"></i>
-                                <span>${post.comments}</span>
+                                <span id="commentCount_${post.id}">${post.comments}</span>
                             </button>
                             <button onclick="event.stopPropagation();" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.9rem; transition: color 0.3s ease;">
                                 <i class="fa-regular fa-share"></i>
@@ -1691,6 +2033,9 @@
             // Load posts from database
             loadFeedPosts();
 
+            // Load reels strip
+            loadReels();
+
             // Create post button
             const createPostBtn = document.querySelector('.create-post-btn');
             if (createPostBtn) {
@@ -1721,8 +2066,8 @@
                 });
             }
 
-            // Post button
-            const postBtn = document.querySelector('.btn-primary');
+            // Post button (inside Create Post modal only)
+            const postBtn = document.querySelector('#createPostModal .btn-primary');
             if (postBtn) {
                 postBtn.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -1851,6 +2196,7 @@
                 profilePic: currentUser ? currentUser.profilePic : '',
                 createdAt: 'Just now',
                 likes: 0,
+                isLiked: false,
                 comments: 0,
                 shares: 0
             };
@@ -1878,16 +2224,21 @@
         function createPostCard(post) {
             const card = document.createElement('article');
             card.className = 'content-card';
+            
+            // Determine like icon class based on isLiked state
+            const likeIconClass = post.isLiked ? 'fa-solid' : 'fa-regular';
+            const likeButtonClass = post.isLiked ? 'card-action liked' : 'card-action';
+            
             card.innerHTML = `
                 <img src="${post.image}" alt="Post" class="card-media" />
                 <div class="card-body">
-                    <h3 class="card-title">${post.title}</h3>
-                    <p class="card-description">${post.description}</p>
+                    <h3 class="card-title">${post.title || post.content}</h3>
+                    <p class="card-description">${post.description || post.content}</p>
                 </div>
                 <div class="card-footer">
                     <div class="card-actions">
-                        <button class="card-action" onclick="toggleLike(this, ${post.id}); event.stopPropagation();">
-                            <i class="fa-regular fa-heart"></i>
+                        <button class="${likeButtonClass}" onclick="toggleLike(this, ${post.id}); event.stopPropagation();">
+                            <i class="${likeIconClass} fa-heart"></i>
                             <span>${post.likes}</span>
                         </button>
                         <button class="card-action" onclick="event.stopPropagation();">
@@ -1908,7 +2259,18 @@
             // Add click event to show post modal
             card.addEventListener('click', function (e) {
                 if (!e.target.closest('.card-action')) {
-                    showPostModal(post);
+                    if (post.isVideo) {
+                        // Find index in feedReels that matches this post's video
+                        const reelIndex = window.feedReels ? window.feedReels.findIndex(r => r.videoUrl && post.image && post.image.includes(r.videoUrl.split('/').pop())) : -1;
+                        if (reelIndex >= 0) {
+                            openReelViewer(reelIndex);
+                        } else {
+                            // Fallback: open inline video viewer with post data
+                            openVideoPost(post);
+                        }
+                    } else {
+                        showPostModal(post);
+                    }
                 }
             });
 
@@ -1920,20 +2282,155 @@
             const count = button.querySelector('span');
             const isLiked = icon.classList.contains('fa-solid');
 
-            if (isLiked) {
-                icon.classList.remove('fa-solid');
-                icon.classList.add('fa-regular');
-                button.classList.remove('liked');
-                count.textContent = parseInt(count.textContent) - 1;
-            } else {
-                icon.classList.remove('fa-regular');
-                icon.classList.add('fa-solid');
-                button.classList.add('liked');
-                count.textContent = parseInt(count.textContent) + 1;
-            }
+            // Disable button during AJAX call
+            button.disabled = true;
+            button.style.opacity = '0.6';
 
-            // Log like activity
-            logUserActivityToDatabase('post', 'like', `Post ID: ${postId}`, null, null);
+            // Call appropriate server method based on current state
+            const webMethod = isLiked ? 'UnlikePost' : 'LikePost';
+            const userId = window.currentUserId;
+
+            // Make AJAX call to server
+            $.ajax({
+                type: "POST",
+                url: "Feed.aspx/" + webMethod,
+                data: JSON.stringify({ postId: postId, userId: userId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) {
+                    const result = typeof response.d === 'string' ? JSON.parse(response.d) : response.d;
+                    if (result.success) {
+                        // Update UI based on successful operation
+                        if (isLiked) {
+                            // Unlike was successful
+                            icon.classList.remove('fa-solid');
+                            icon.classList.add('fa-regular');
+                            button.classList.remove('liked');
+                            count.textContent = result.likeCount;
+                        } else {
+                            // Like was successful
+                            icon.classList.remove('fa-regular');
+                            icon.classList.add('fa-solid');
+                            button.classList.add('liked');
+                            count.textContent = result.likeCount;
+                        }
+
+                        // Update post data in memory
+                        const post = window.feedPosts.find(p => p.id === postId);
+                        if (post) {
+                            post.likes = result.likeCount;
+                            post.isLiked = !isLiked;
+                        }
+
+                        // Update modal if it's open for this post
+                        updateModalLikeState(postId, result.likeCount, !isLiked);
+
+                        // Show success message
+                        if (isLiked) {
+                            showErrorMessage('Post unliked successfully');
+                        } else {
+                            showErrorMessage('Post liked successfully! ❤️');
+                        }
+                    } else {
+                        // Server returned an error
+                        showErrorMessage(result.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                    showErrorMessage('An error occurred while processing your request. Please try again.');
+                },
+                complete: function() {
+                    // Re-enable button
+                    button.disabled = false;
+                    button.style.opacity = '1';
+                }
+            });
+        }
+
+        function updateModalLikeState(postId, likeCount, isLiked) {
+            const modalPostLikes = document.getElementById('modalPostLikes');
+            const modalLikeBtn = document.getElementById('modalLikeBtn');
+            const modalLikeIcon = modalLikeBtn ? modalLikeBtn.querySelector('i') : null;
+
+            // Check if modal is open and showing this post
+            if (modalPostLikes && currentPostData && currentPostData.id === postId) {
+                modalPostLikes.textContent = likeCount;
+                
+                if (modalLikeIcon) {
+                    if (isLiked) {
+                        modalLikeIcon.classList.remove('fa-regular');
+                        modalLikeIcon.classList.add('fa-solid');
+                        modalLikeBtn.classList.add('liked');
+                    } else {
+                        modalLikeIcon.classList.remove('fa-solid');
+                        modalLikeIcon.classList.add('fa-regular');
+                        modalLikeBtn.classList.remove('liked');
+                    }
+                }
+
+                // Update current post data
+                currentPostData.likes = likeCount;
+                currentPostData.isLiked = isLiked;
+            }
+        }
+
+        function showSuccessMessage(message) {
+            // Create success notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                z-index: 10001;
+                font-weight: 500;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function showErrorMessage(message) {
+            // Create error message element
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #ef4444;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+                font-family: 'Poppins', sans-serif;
+                font-size: 14px;
+                animation: slideIn 0.3s ease;
+            `;
+
+            document.body.appendChild(errorDiv);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.parentNode.removeChild(errorDiv);
+                }
+            }, 3000);
         }
 
         function logUserActivityToDatabase(activityType, action, content, mediaUrl, tags) {
@@ -2116,200 +2613,441 @@
             logUserActivityToDatabase('post', 'like', currentPostData.title, currentPostData.image, null);
         }
 
-        // Close modal when clicking outside
+        // Close modals when clicking outside
         window.onclick = function(event) {
             const createModal = document.getElementById('createPostModal');
             const addReelModal = document.getElementById('addReelModal');
             const postModal = document.getElementById('postModal');
             
-            if (event.target == createModal) {
+            if (event.target === createModal) {
                 hideCreatePostModal();
             }
             
-            if (event.target == addReelModal) {
+            if (event.target === addReelModal) {
                 hideAddReelModal();
             }
             
-            if (event.target == postModal) {
+            if (event.target === postModal) {
                 hidePostModal();
             }
         }
-        const reels = [
-            {
-                video: 'https://www.w3schools.com/html/mov_bbb.mp4',
-                title: 'Sunset Timelapse',
-                caption: 'Beautiful sunset timelapse over the city skyline.',
-                views: '1.2M'
-            },
-            {
-                video: 'https://www.w3schools.com/html/movie.mp4',
-                title: 'Ocean Waves',
-                caption: 'Relaxing ocean waves on a sunny day.',
-                views: '856K'
-            },
-            {
-                video: 'https://www.w3schools.com/html/mov_bbb.mp4',
-                title: 'City Lights',
-                caption: 'Night time city lights from above.',
-                views: '3.4M'
-            },
-            {
-                video: 'https://www.w3schools.com/html/movie.mp4',
-                title: 'Nature Documentary',
-                caption: 'Exploring the wonders of nature.',
-                views: '567K'
-            }
-        ];
+        
+        // ─── Comment Modal ───────────────────────────────────────────────
+        let currentCommentPostId = null;
 
-        let currentReelIndex = 0;
-
-        function showReel(index) {
-            const reel = reels[index];
-            const reelVideo = document.getElementById('reelVideo');
-            const reelTitle = document.getElementById('reelTitle');
-            const reelViews = document.getElementById('reelViews');
-            const reelCaption = document.getElementById('reelCaption');
-            
-            // Change video source
-            reelVideo.src = reel.video;
-            reelVideo.load(); // Load new video
-            
-            // Update text content
-            reelTitle.textContent = reel.title;
-            reelViews.textContent = reel.views;
-            reelCaption.textContent = reel.caption;
-            
-            // Auto-play video
-            reelVideo.play();
-        }
-
-        let autoPlayInterval;
-        let isAutoPlaying = false;
-
-        function startAutoPlay() {
-            if (!isAutoPlaying) return;
-            
-            autoPlayInterval = setInterval(() => {
-                nextReel();
-            }, 8000); // Change reel every 8 seconds
-        }
-
-        function stopAutoPlay() {
-            isAutoPlaying = false;
-            if (autoPlayInterval) {
-                clearInterval(autoPlayInterval);
-            }
-        }
-
-        function toggleAutoPlay() {
-            if (isAutoPlaying) {
-                stopAutoPlay();
-            } else {
-                isAutoPlaying = true;
-                startAutoPlay();
-            }
-        }
-
-        function nextReel() {
-            currentReelIndex = (currentReelIndex + 1) % reels.length;
-            showReel(currentReelIndex);
-        }
-
-        function previousReel() {
-            currentReelIndex = (currentReelIndex - 1 + reels.length) % reels.length;
-            showReel(currentReelIndex);
-        }
-
-        // Initialize with auto-play on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            isAutoPlaying = true;
-            startAutoPlay();
-        });
-
-        // Navigation buttons only - no auto-play resume
-        document.addEventListener('DOMContentLoaded', function() {
-            const navButtons = document.querySelectorAll('.reel-nav-btn');
-            navButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Just change reel, no auto-play management
-                });
-            });
-        });
-
-        // Keyboard navigation
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowUp') {
-                previousReel();
-            } else if (event === 'ArrowDown') {
-                nextReel();
-            }
-        });
-
-        // Add Reel Modal Functions
-        function showAddReelModal() {
-            document.getElementById('addReelModal').style.display = 'block';
+        function openCommentModal(postId) {
+            currentCommentPostId = postId;
+            document.getElementById('commentModal').classList.add('open');
             document.body.style.overflow = 'hidden';
+            document.getElementById('commentInput').value = '';
+            loadComments(postId);
         }
 
-        function hideAddReelModal() {
-            document.getElementById('addReelModal').style.display = 'none';
+        function hideCommentModal() {
+            document.getElementById('commentModal').classList.remove('open');
+            document.body.style.overflow = 'auto';
+            currentCommentPostId = null;
+        }
+
+        function handleCommentModalOutsideClick(e) {
+            if (e.target === document.getElementById('commentModal')) hideCommentModal();
+        }
+
+        function loadComments(postId) {
+            const list = document.getElementById('commentList');
+            list.innerHTML = '<div class="comment-empty">Loading comments...</div>';
+
+            $.ajax({
+                type: 'POST',
+                url: 'Feed.aspx/GetComments',
+                data: JSON.stringify({ postId: postId }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(response) {
+                    const result = typeof response.d === 'string' ? JSON.parse(response.d) : response.d;
+                    renderComments(result.comments);
+                },
+                error: function() {
+                    list.innerHTML = '<div class="comment-empty">Failed to load comments.</div>';
+                }
+            });
+        }
+
+        function renderComments(comments) {
+            const list = document.getElementById('commentList');
+            if (!comments || comments.length === 0) {
+                list.innerHTML = '<div class="comment-empty">No comments yet. Be the first to comment!</div>';
+                return;
+            }
+            list.innerHTML = '';
+            comments.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'comment-item';
+                const avatarHtml = c.profilePic
+                    ? `<img class="comment-avatar" src="${c.profilePic}" alt="${c.displayName}" />`
+                    : `<div class="comment-avatar-icon"><i class="fa-solid fa-user"></i></div>`;
+                item.innerHTML = `
+                    ${avatarHtml}
+                    <div class="comment-bubble">
+                        <div class="comment-username">${c.displayName}</div>
+                        <div class="comment-text">${escapeHtml(c.content)}</div>
+                        <div class="comment-time">${c.createdAt}</div>
+                    </div>`;
+                list.appendChild(item);
+            });
+            list.scrollTop = list.scrollHeight;
+        }
+
+        function submitComment() {
+            const input = document.getElementById('commentInput');
+            const btn = document.getElementById('commentSubmitBtn');
+            const text = input.value.trim();
+            if (!text || !currentCommentPostId) return;
+
+            btn.disabled = true;
+            $.ajax({
+                type: 'POST',
+                url: 'Feed.aspx/AddComment',
+                data: JSON.stringify({ postId: currentCommentPostId, userId: window.currentUserId, content: text }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(response) {
+                    const result = typeof response.d === 'string' ? JSON.parse(response.d) : response.d;
+                    if (result.success) {
+                        input.value = '';
+                        // Append new comment to list
+                        renderComments(result.comments);
+                        // Update comment count on the card
+                        const countEl = document.getElementById('commentCount_' + currentCommentPostId);
+                        if (countEl) countEl.textContent = result.commentCount;
+                        // Update in-memory post
+                        const post = window.feedPosts.find(p => p.id === currentCommentPostId);
+                        if (post) post.comments = result.commentCount;
+                        // Update modal stats if open
+                        const modalComments = document.getElementById('modalPostComments');
+                        if (modalComments && currentPostData && currentPostData.id === currentCommentPostId)
+                            modalComments.textContent = result.commentCount;
+                    } else {
+                        showErrorMessage(result.message || 'Failed to post comment.');
+                    }
+                },
+                error: function() {
+                    showErrorMessage('An error occurred. Please try again.');
+                },
+                complete: function() {
+                    btn.disabled = false;
+                }
+            });
+        }
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.appendChild(document.createTextNode(text));
+            return d.innerHTML;
+        }
+        // ─────────────────────────────────────────────────────────────────
+
+        // ─── Reels Page (Quick Links) ─────────────────────────────────────
+        function openReelsPage() {
+            const modal = document.getElementById('reelsPageModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            if (window.feedReels && window.feedReels.length > 0) {
+                renderReelsPage(window.feedReels);
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    url: 'Feed.aspx/GetReels',
+                    data: JSON.stringify({}),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function(response) {
+                        const result = typeof response.d === 'string' ? JSON.parse(response.d) : response.d;
+                        if (result.success && result.reels && result.reels.length > 0) {
+                            window.feedReels = result.reels;
+                            renderReelsPage(result.reels);
+                        } else {
+                            document.getElementById('reelsPageEmpty').style.display = 'flex';
+                        }
+                    },
+                    error: function() {
+                        document.getElementById('reelsPageEmpty').style.display = 'flex';
+                    }
+                });
+            }
+        }
+
+        function closeReelsPage() {
+            document.querySelectorAll('#reelsPageContainer video').forEach(v => v.pause());
+            document.getElementById('reelsPageModal').style.display = 'none';
+            document.getElementById('reelsPageContainer').innerHTML = '';
+            document.getElementById('reelsPageEmpty').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
 
-        function uploadReel() {
-            const videoFile = document.getElementById('reelVideoFile').files[0];
-            const caption = document.getElementById('reelCaption').value;
-            
-            if (!videoFile) {
-                alert('Please select a video file.');
-                return;
-            }
-            
-            // Convert video to base64 (for demo purposes)
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const videoBase64 = e.target.result;
-                
-                // Add new reel to the beginning of the array
-                const newReel = {
-                    video: videoBase64,
-                    title: 'Your New Reel',
-                    caption: caption || 'Check out my new reel!',
-                    views: 'Just now'
-                };
-                
-                reels.unshift(newReel);
-                currentReelIndex = 0;
-                showReel(0);
-                
-                // Log activity (in real app, this would be sent to server)
-                logUserActivity('reel', 'upload', caption);
-                
-                hideAddReelModal();
-                
-                // Reset form
-                document.getElementById('reelVideoFile').value = '';
-                document.getElementById('reelCaption').value = '';
-            };
-            reader.readAsDataURL(videoFile);
+        function renderReelsPage(reels) {
+            const container = document.getElementById('reelsPageContainer');
+            container.innerHTML = '';
+
+            reels.forEach((reel, index) => {
+                const item = document.createElement('div');
+                item.className = 'reel-page-item';
+                item.innerHTML = `
+                    <video src="${reel.videoUrl}" loop playsinline
+                        style="height:100vh; max-width:100%; object-fit:contain;"
+                        onclick="this.paused ? this.play() : this.pause()"></video>
+                    <div class="reel-page-info">
+                        <div class="reel-username">@${escapeHtml(reel.username)}</div>
+                        <div class="reel-name">${escapeHtml(reel.reelName)}</div>
+                        <div class="reel-date">${reel.createdAt}</div>
+                    </div>
+                    <div class="reel-page-side-actions">
+                        <button type="button" class="reel-side-btn ${reel.isLiked ? 'reel-liked' : ''}"
+                            data-reel-id="${reel.reelId}"
+                            data-liked="${reel.isLiked ? 'true' : 'false'}"
+                            onclick="toggleReelPageLike(this)">
+                            <i class="${reel.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart" style="color:${reel.isLiked ? '#ef4444' : '#fff'};"></i>
+                            <span class="reel-like-count">${reel.likes}</span>
+                        </button>
+                        <button type="button" class="reel-side-btn" onclick="openCommentModal(${reel.reelId})">
+                            <i class="fa-regular fa-comment"></i>
+                        </button>
+                        <button type="button" class="reel-side-btn">
+                            <i class="fa-regular fa-share-from-square"></i>
+                        </button>
+                    </div>`;
+                container.appendChild(item);
+            });
+
+            const firstVideo = container.querySelector('video');
+            if (firstVideo) firstVideo.play().catch(() => {});
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (!video) return;
+                    if (entry.isIntersecting) { video.play().catch(() => {}); }
+                    else { video.pause(); }
+                });
+            }, { threshold: 0.6 });
+
+            container.querySelectorAll('.reel-page-item').forEach(item => observer.observe(item));
         }
 
-        function logUserActivity(activityType, action, content) {
-            // Log to console for demo (in real app, send to server)
-            console.log('Activity logged:', {
-                type: activityType,
-                action: action,
-                content: content,
-                timestamp: new Date().toISOString(),
-                userId: '<%= Session["UserID"] %>'
+        function toggleReelPageLike(btn) {
+            const reelId   = parseInt(btn.dataset.reelId);
+            const isLiked  = btn.dataset.liked === 'true';
+            const icon     = btn.querySelector('i');
+            const countEl  = btn.querySelector('.reel-like-count');
+            const webMethod = isLiked ? 'UnlikeReel' : 'LikeReel';
+
+            btn.disabled = true;
+            $.ajax({
+                type: 'POST',
+                url: 'Feed.aspx/' + webMethod,
+                data: JSON.stringify({ reelId: reelId, userId: window.currentUserId }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(response) {
+                    const result = typeof response.d === 'string' ? JSON.parse(response.d) : response.d;
+                    if (result.success) {
+                        if (isLiked) {
+                            icon.className = 'fa-regular fa-heart';
+                            icon.style.color = '#fff';
+                            btn.dataset.liked = 'false';
+                        } else {
+                            icon.className = 'fa-solid fa-heart';
+                            icon.style.color = '#ef4444';
+                            btn.dataset.liked = 'true';
+                        }
+                        if (countEl) countEl.textContent = result.likeCount;
+                        // Update in-memory reel
+                        if (window.feedReels) {
+                            const reel = window.feedReels.find(r => r.reelId === reelId);
+                            if (reel) { reel.isLiked = !isLiked; reel.likes = result.likeCount; }
+                        }
+                        // Refresh strip card liked state
+                        renderReels(window.feedReels);
+                    }
+                },
+                error: function() { showErrorMessage('Could not update like. Please try again.'); },
+                complete: function() { btn.disabled = false; }
+            });
+        }
+        // ─────────────────────────────────────────────────────────────────
+
+        // ─── Video post fallback viewer ──────────────────────────────────
+        function openVideoPost(post) {
+            // Reuse reel viewer modal with post video data
+            const modal = document.getElementById('reelViewerModal');
+            document.getElementById('reelViewerVideo').src = post.image;
+            document.getElementById('reelViewerName').textContent = post.content || 'Video Post';
+            document.getElementById('reelViewerUser').textContent = '@' + post.username;
+            document.getElementById('reelViewerDate').textContent = post.createdAt;
+            document.getElementById('reelPrevBtn').style.display = 'none';
+            document.getElementById('reelNextBtn').style.display = 'none';
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        // ─────────────────────────────────────────────────────────────────
+
+        // ─── Reels ────────────────────────────────────────────────────────
+        let currentReelIndex = 0;
+
+        function loadReels() {
+            $.ajax({
+                type: 'POST',
+                url: 'Feed.aspx/GetReels',
+                data: JSON.stringify({}),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(response) {
+                    const result = typeof response.d === 'string' ? JSON.parse(response.d) : response.d;
+                    if (result.success && result.reels && result.reels.length > 0) {
+                        window.feedReels = result.reels;
+                        renderReels(result.reels);
+                        document.getElementById('reelsSection').style.display = 'block';
+                    }
+                },
+                error: function() { console.warn('Could not load reels.'); }
             });
         }
 
-        // Close modal when clicking outside
-        window.onclick = function (event) {
+        function renderReels(reels) {
+            const container = document.getElementById('reelsContainer');
+            container.innerHTML = '';
+            reels.forEach((reel, index) => {
+                const card = document.createElement('div');
+                card.style.cssText = 'flex-shrink:0; width:110px; cursor:pointer; border-radius:12px; overflow:hidden; position:relative; background:#111; border:1px solid rgba(148,163,184,0.2); transition:transform 0.2s;';
+                card.onmouseenter = () => card.style.transform = 'scale(1.04)';
+                card.onmouseleave = () => card.style.transform = 'scale(1)';
+                card.onclick = () => openReelViewer(index);
+                card.innerHTML = `
+                    <video src="${reel.videoUrl}" style="width:110px; height:170px; object-fit:cover; display:block; pointer-events:none;" muted preload="metadata"></video>
+                    <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%);"></div>
+                    <div style="position:absolute; top:8px; left:0; right:0; display:flex; justify-content:center;">
+                        <div style="background:rgba(255,255,255,0.18); border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-play" style="color:#fff; font-size:0.65rem; margin-left:2px;"></i>
+                        </div>
+                    </div>
+                    <div style="position:absolute; bottom:0; left:0; right:0; padding:6px 7px;">
+                        <div style="font-size:0.72rem; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(reel.reelName)}</div>
+                        <div style="font-size:0.65rem; color:rgba(255,255,255,0.65); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@${escapeHtml(reel.username)}</div>
+                        <div style="font-size:0.65rem; color:${reel.isLiked ? '#ef4444' : 'rgba(255,255,255,0.7)'}; margin-top:3px; display:flex; align-items:center; gap:3px;">
+                            <i class="${reel.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart" style="font-size:0.6rem;"></i>
+                            <span>${reel.likes || 0}</span>
+                        </div>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function openReelViewer(index) {
+            window.feedReels = window.feedReels || [];
+            if (!window.feedReels.length) return;
+            currentReelIndex = index;
+            const reel = window.feedReels[index];
+            const modal = document.getElementById('reelViewerModal');
+            document.getElementById('reelViewerVideo').src = reel.videoUrl;
+            document.getElementById('reelViewerName').textContent = reel.reelName;
+            document.getElementById('reelViewerUser').textContent = '@' + reel.username;
+            document.getElementById('reelViewerDate').textContent = reel.createdAt;
+            document.getElementById('reelPrevBtn').style.display = index === 0 ? 'none' : 'flex';
+            document.getElementById('reelNextBtn').style.display = index === window.feedReels.length - 1 ? 'none' : 'flex';
+            // Set like state
+            const likeIcon = document.getElementById('reelLikeIcon');
+            const likeCount = document.getElementById('reelLikeCount');
+            const likeBtn = document.getElementById('reelLikeBtn');
+            likeCount.textContent = reel.likes || 0;
+            if (reel.isLiked) {
+                likeIcon.className = 'fa-solid fa-heart';
+                likeBtn.style.color = '#ef4444';
+                likeBtn.style.borderColor = '#ef4444';
+            } else {
+                likeIcon.className = 'fa-regular fa-heart';
+                likeBtn.style.color = '#fff';
+                likeBtn.style.borderColor = 'rgba(255,255,255,0.2)';
+            }
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function toggleReelLike() {
+            const reel = window.feedReels[currentReelIndex];
+            if (!reel) return;
+            const likeBtn = document.getElementById('reelLikeBtn');
+            const likeIcon = document.getElementById('reelLikeIcon');
+            const likeCount = document.getElementById('reelLikeCount');
+            const isLiked = reel.isLiked;
+            const webMethod = isLiked ? 'UnlikeReel' : 'LikeReel';
+            likeBtn.disabled = true;
+            $.ajax({
+                type: 'POST',
+                url: 'Feed.aspx/' + webMethod,
+                data: JSON.stringify({ reelId: reel.reelId, userId: window.currentUserId }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function(response) {
+                    const result = typeof response.d === 'string' ? JSON.parse(response.d) : response.d;
+                    if (result.success) {
+                        reel.isLiked = !isLiked;
+                        reel.likes = result.likeCount;
+                        likeCount.textContent = result.likeCount;
+                        if (reel.isLiked) {
+                            likeIcon.className = 'fa-solid fa-heart';
+                            likeBtn.style.color = '#ef4444';
+                            likeBtn.style.borderColor = '#ef4444';
+                        } else {
+                            likeIcon.className = 'fa-regular fa-heart';
+                            likeBtn.style.color = '#fff';
+                            likeBtn.style.borderColor = 'rgba(255,255,255,0.2)';
+                        }
+                        // Update like count in strip card too
+                        renderReels(window.feedReels);
+                    }
+                },
+                complete: function() { likeBtn.disabled = false; }
+            });
+        }
+
+        function closeReelViewer() {
+            const video = document.getElementById('reelViewerVideo');
+            video.pause();
+            video.src = '';
+            document.getElementById('reelViewerModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function navigateReel(direction) {
+            const newIndex = currentReelIndex + direction;
+            if (newIndex >= 0 && newIndex < window.feedReels.length) {
+                document.getElementById('reelViewerVideo').pause();
+                openReelViewer(newIndex);
+            }
+        }
+
+        // Close reel viewer on outside click
+        document.getElementById('reelViewerModal').addEventListener('click', function(e) {
+            if (e.target === this) closeReelViewer();
+        });
+        // ─────────────────────────────────────────────────────────────────
+
+        function hideAddReelModal() {
             var modal = document.getElementById('addReelModal');
-            if (event.target == modal) {
-                hideAddReelModal();
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+
+                var reelNameInput = document.getElementById('<%= txtReelName.ClientID %>');
+                if (reelNameInput) {
+                    reelNameInput.value = '';
+                }
+
+                var reelFileInput = document.getElementById('<%= fuReelVideo.ClientID %>');
+                if (reelFileInput) {
+                    reelFileInput.value = '';
+                }
             }
         }
     </script>
